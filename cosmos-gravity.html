@@ -1,0 +1,4058 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GRAVITAS // 三维宇宙引力场</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ==========================================================================
+   GRAVITAS // Minimalist Cosmic Observatory Design System
+   Monochrome Black/White Polarity + Organic Breathing Tactility
+   ========================================================================== */
+
+:root {
+  --font-display: "Space Grotesk", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+
+  --ease-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-breath: cubic-bezier(0.37, 0, 0.63, 1);
+
+  --theme-duration: 620ms;
+}
+
+/* Dark Theme: Obsidian Void */
+[data-theme="dark"] {
+  --bg-void: #050507;
+  --bg-surface: rgba(12, 13, 18, 0.56);
+  --bg-surface-elevated: rgba(20, 22, 30, 0.76);
+  --surface-solid: #0b0c10;
+
+  --fg-primary: #f4f4f7;
+  --fg-secondary: rgba(244, 244, 247, 0.62);
+  --fg-muted: rgba(244, 244, 247, 0.38);
+
+  --border-hairline: rgba(255, 255, 255, 0.11);
+  --border-strong: rgba(255, 255, 255, 0.28);
+  --border-breath: rgba(255, 255, 255, 0.34);
+
+  --btn-bg: rgba(255, 255, 255, 0.045);
+  --btn-bg-hover: rgba(255, 255, 255, 0.105);
+  --btn-primary-bg: rgba(255, 255, 255, 0.12);
+  --btn-primary-border: rgba(255, 255, 255, 0.32);
+
+  --slider-pill-bg: rgba(255, 255, 255, 0.14);
+  --slider-pill-border: rgba(255, 255, 255, 0.28);
+
+  --breath-glow: rgba(255, 255, 255, 0.14);
+  --breath-glow-strong: rgba(255, 255, 255, 0.26);
+  --spot-sheen: rgba(255, 255, 255, 0.16);
+  --ripple-color: rgba(255, 255, 255, 0.35);
+
+  --vignette-edge: rgba(2, 2, 4, 0.72);
+  --shadow-dock: 0 20px 56px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* Light Theme: Alabaster Observatory */
+[data-theme="light"] {
+  --bg-void: #f3f2ee;
+  --bg-surface: rgba(247, 246, 242, 0.66);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.88);
+  --surface-solid: #efeeea;
+
+  --fg-primary: #0b0c10;
+  --fg-secondary: rgba(11, 12, 16, 0.62);
+  --fg-muted: rgba(11, 12, 16, 0.42);
+
+  --border-hairline: rgba(11, 12, 16, 0.11);
+  --border-strong: rgba(11, 12, 16, 0.28);
+  --border-breath: rgba(11, 12, 16, 0.32);
+
+  --btn-bg: rgba(11, 12, 16, 0.04);
+  --btn-bg-hover: rgba(11, 12, 16, 0.09);
+  --btn-primary-bg: rgba(11, 12, 16, 0.085);
+  --btn-primary-border: rgba(11, 12, 16, 0.3);
+
+  --slider-pill-bg: rgba(11, 12, 16, 0.1);
+  --slider-pill-border: rgba(11, 12, 16, 0.26);
+
+  --breath-glow: rgba(11, 12, 16, 0.08);
+  --breath-glow-strong: rgba(11, 12, 16, 0.16);
+  --spot-sheen: rgba(11, 12, 16, 0.09);
+  --ripple-color: rgba(11, 12, 16, 0.24);
+
+  --vignette-edge: rgba(224, 222, 215, 0.52);
+  --shadow-dock: 0 18px 48px rgba(15, 16, 22, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-void);
+  color: var(--fg-primary);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+  transition:
+    background-color var(--theme-duration) var(--ease-expo),
+    color var(--theme-duration) var(--ease-expo);
+}
+
+/* Fullscreen 3D Canvas */
+#cosmos-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  z-index: 1;
+}
+
+#cosmos-canvas:active,
+body.is-dragging #cosmos-canvas {
+  cursor: grabbing;
+}
+
+/* Soft Atmospheric Vignette */
+.vignette-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(
+    circle at 50% 48%,
+    transparent 42%,
+    var(--vignette-edge) 100%
+  );
+  transition: background var(--theme-duration) var(--ease-expo);
+}
+
+/* HUD Shell */
+.hud-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  padding: clamp(18px, 2.8vw, 34px) clamp(20px, 3.4vw, 44px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: opacity 420ms var(--ease-expo), transform 420ms var(--ease-expo);
+}
+
+body.is-zen .hud-shell {
+  opacity: 0;
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Top Navigation Bar
+   ========================================================================== */
+.hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand-lockup {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px 8px 11px;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-dock);
+  transition:
+    background-color var(--theme-duration) var(--ease-expo),
+    border-color var(--theme-duration) var(--ease-expo);
+}
+
+.brand-emblem {
+  display: grid;
+  place-items: center;
+  color: var(--fg-primary);
+  animation: slow-spin 26s linear infinite;
+}
+
+.brand-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  font-weight: 500;
+}
+
+.brand-divider,
+.brand-index {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 10px;
+  margin-left: 2px;
+  border-left: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--fg-secondary);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  animation: dot-breathe 3.4s var(--ease-breath) infinite;
+}
+
+.top-actions {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   Editorial Overlay (3D Pointer-Parallax Typography)
+   ========================================================================== */
+.editorial-overlay {
+  position: fixed;
+  left: clamp(24px, 3.6vw, 48px);
+  top: clamp(92px, 12vh, 132px);
+  max-width: 340px;
+  pointer-events: none;
+  transform: translate3d(var(--ui-parallax-x, 0px), var(--ui-parallax-y, 0px), 0);
+  transition: transform 220ms ease-out;
+}
+
+.editorial-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--fg-muted);
+  margin-bottom: 8px;
+}
+
+.editorial-title {
+  font-size: clamp(28px, 3.8vw, 46px);
+  font-weight: 300;
+  letter-spacing: 0.24em;
+  line-height: 1.04;
+  color: var(--fg-primary);
+  margin-bottom: 10px;
+}
+
+.editorial-subtitle {
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--fg-secondary);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.editorial-coords {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.editorial-coords b {
+  font-weight: 500;
+  color: var(--fg-secondary);
+}
+
+.coord-dot {
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+}
+
+/* ==========================================================================
+   Bottom Control Dock
+   ========================================================================== */
+.control-dock {
+  pointer-events: auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  backdrop-filter: blur(22px) saturate(120%);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  box-shadow: var(--shadow-dock);
+  transition:
+    background-color var(--theme-duration) var(--ease-expo),
+    border-color var(--theme-duration) var(--ease-expo),
+    box-shadow var(--theme-duration) var(--ease-expo);
+}
+
+.dock-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--border-hairline);
+  flex-shrink: 0;
+  transition: background-color var(--theme-duration) var(--ease-expo);
+}
+
+/* Segmented Gravity Mode Switch */
+.mode-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  border: 1px solid var(--border-hairline);
+}
+
+.mode-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: calc(100% - 6px);
+  width: 66px;
+  border-radius: 999px;
+  background: var(--slider-pill-bg);
+  border: 1px solid var(--slider-pill-border);
+  pointer-events: none;
+  transition:
+    transform 420ms var(--ease-spring),
+    width 420ms var(--ease-spring),
+    background-color var(--theme-duration) var(--ease-expo),
+    border-color var(--theme-duration) var(--ease-expo);
+  animation: pill-breathe 3.8s var(--ease-breath) infinite;
+}
+
+.mode-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 13px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg-secondary);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  outline: none;
+  transition: color 240ms var(--ease-expo), transform 180ms var(--ease-spring);
+}
+
+.mode-btn:hover {
+  color: var(--fg-primary);
+}
+
+.mode-btn:active {
+  transform: scale(0.94);
+}
+
+.mode-btn.is-active {
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+
+.mode-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  transition: opacity 280ms var(--ease-expo), transform 280ms var(--ease-spring);
+}
+
+.mode-btn.is-active .mode-dot {
+  opacity: 1;
+  transform: scale(1.25);
+}
+
+/* Gravity Strength Slider */
+.strength-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 6px;
+}
+
+.strength-label {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--fg-secondary);
+}
+
+.slider-track-wrap {
+  display: flex;
+  align-items: center;
+  width: 78px;
+}
+
+#gravity-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  outline: none;
+  cursor: pointer;
+}
+
+#gravity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  border: 2px solid var(--surface-solid);
+  box-shadow: 0 0 0 1px var(--border-strong), 0 0 12px var(--breath-glow-strong);
+  cursor: pointer;
+  transition: transform 200ms var(--ease-spring), box-shadow 240ms ease;
+  animation: thumb-breathe 3.8s var(--ease-breath) infinite;
+}
+
+#gravity-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.22);
+  box-shadow: 0 0 0 1px var(--fg-primary), 0 0 18px var(--breath-glow-strong);
+}
+
+#gravity-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  border: 2px solid var(--surface-solid);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  cursor: pointer;
+}
+
+.strength-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--fg-primary);
+  min-width: 34px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dock-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Breathing Tactile Buttons (Core Aesthetic Signature)
+   ========================================================================== */
+.breath-btn {
+  position: relative;
+  overflow: visible;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  border: 1px solid var(--border-hairline);
+  color: var(--fg-primary);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transform: translate3d(calc(var(--mx, 0) * 3px), calc(var(--my, 0) * 2.4px), 0) scale(1);
+  transition:
+    transform 240ms var(--ease-spring),
+    background-color 260ms var(--ease-expo),
+    border-color 280ms var(--ease-expo),
+    color var(--theme-duration) var(--ease-expo),
+    box-shadow 300ms var(--ease-expo);
+  animation: btn-breathe-idle 4.4s var(--ease-breath) infinite;
+}
+
+/* Staggered respiration phases so dock buttons feel alive together */
+.breath-btn:nth-child(2n) {
+  animation-delay: -1.4s;
+}
+.breath-btn:nth-child(3n) {
+  animation-delay: -2.7s;
+}
+
+/* Outer soft breathing aura */
+.breath-btn::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.55;
+  background: radial-gradient(
+    circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    var(--breath-glow),
+    transparent 72%
+  );
+  filter: blur(6px);
+  transition: opacity 280ms ease, transform 320ms var(--ease-expo);
+  animation: aura-breathe 4.4s var(--ease-breath) infinite;
+}
+
+/* Internal radial cursor sheen clipped cleanly via mask/overflow inner layer */
+.breath-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    64px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    var(--spot-sheen),
+    transparent 75%
+  );
+  transition: opacity 240ms ease;
+}
+
+.breath-btn:hover {
+  background: var(--btn-bg-hover);
+  border-color: var(--border-strong);
+  transform: translate3d(calc(var(--mx, 0) * 3.5px), calc(var(--my, 0) * 2.8px - 1.5px), 0) scale(1.032);
+  box-shadow: 0 8px 24px -6px var(--breath-glow-strong);
+  animation-play-state: paused;
+}
+
+.breath-btn:hover::before {
+  opacity: 0.9;
+  transform: scale(1.06);
+}
+
+.breath-btn:hover::after {
+  opacity: 1;
+}
+
+.breath-btn:active {
+  transform: translate3d(calc(var(--mx, 0) * 2px), calc(var(--my, 0) * 1.5px + 0.5px), 0) scale(0.95);
+  transition-duration: 90ms;
+}
+
+.breath-btn:focus-visible,
+.mode-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--surface-solid), 0 0 0 3.5px var(--fg-primary);
+}
+
+/* Primary Breathing Action Button (Pulse & Theme Switch) */
+.breath-btn--primary {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  font-weight: 500;
+  animation: btn-breathe-primary 3.5s var(--ease-breath) infinite;
+}
+
+.breath-btn--primary::before {
+  inset: -6px;
+  border: 1px solid var(--border-hairline);
+  background: radial-gradient(circle, var(--breath-glow-strong) 0%, transparent 70%);
+  animation: aura-ring-breathe 3.5s var(--ease-breath) infinite;
+}
+
+.breath-btn--theme {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+  padding: 0 15px 0 12px;
+  box-shadow: var(--shadow-dock);
+  animation: btn-breathe-primary 4.0s var(--ease-breath) infinite;
+}
+
+.breath-btn--compact {
+  height: 36px;
+  padding: 0 13px;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-dock);
+}
+
+.breath-btn--ghost {
+  color: var(--fg-secondary);
+}
+
+.breath-btn--ghost:hover {
+  color: var(--fg-primary);
+}
+
+.breath-btn[aria-pressed="true"]:not(#btn-theme) {
+  background: var(--slider-pill-bg);
+  border-color: var(--fg-primary);
+}
+
+.btn-icon {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.btn-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-hairline);
+  color: var(--fg-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Theme Eclipse SVG Morph */
+.theme-glyph {
+  display: inline-grid;
+  place-items: center;
+}
+
+.theme-glyph .glyph-orbit {
+  transform-origin: center;
+  transition: transform 600ms var(--ease-expo);
+}
+
+.theme-glyph .glyph-core {
+  transform-origin: center;
+  transition: transform 520ms var(--ease-spring);
+}
+
+.theme-glyph .glyph-eclipse {
+  fill: var(--surface-solid);
+  transform-origin: center;
+  transition:
+    fill var(--theme-duration) var(--ease-expo),
+    transform 520ms var(--ease-expo),
+    opacity 420ms ease;
+}
+
+[data-theme="light"] .theme-glyph .glyph-orbit {
+  transform: rotate(90deg) scale(1.06);
+}
+
+[data-theme="light"] .theme-glyph .glyph-core {
+  transform: scale(0.88);
+}
+
+[data-theme="light"] .theme-glyph .glyph-eclipse {
+  opacity: 0;
+  transform: translate(4px, -4px) scale(0.15);
+}
+
+/* Ripple Exhale Element spawned on click */
+.breath-ripple {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  border: 1px solid var(--ripple-color);
+  background: radial-gradient(circle, var(--breath-glow) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0.15);
+  opacity: 0.9;
+  animation: breath-exhale 560ms var(--ease-expo) forwards;
+}
+
+/* ==========================================================================
+   Bottom Corner Annotations
+   ========================================================================== */
+.corner-hints,
+.corner-metrics {
+  position: fixed;
+  bottom: clamp(18px, 2.6vw, 30px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 320ms ease, color var(--theme-duration) var(--ease-expo);
+}
+
+.corner-hints {
+  left: clamp(20px, 3.4vw, 44px);
+}
+
+.corner-metrics {
+  right: clamp(20px, 3.4vw, 44px);
+}
+
+.corner-metrics b {
+  font-weight: 500;
+  color: var(--fg-secondary);
+}
+
+.hint-sep {
+  opacity: 0.45;
+}
+
+/* Zen Restore Floating Button */
+.zen-restore {
+  position: fixed;
+  top: clamp(18px, 2.8vw, 34px);
+  right: clamp(20px, 3.4vw, 44px);
+  z-index: 20;
+}
+
+/* ==========================================================================
+   Audio Source Popover & Reactive Field HUD
+   ========================================================================== */
+.audio-popover {
+  position: fixed;
+  top: clamp(68px, 6.2vw, 86px);
+  right: clamp(20px, 3.4vw, 44px);
+  z-index: 18;
+  width: min(352px, calc(100vw - 32px));
+  padding: 14px 16px 15px;
+  border-radius: 20px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-hairline);
+  box-shadow: var(--shadow-dock);
+  backdrop-filter: blur(22px) saturate(135%);
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--fg-primary);
+  pointer-events: auto;
+  transform-origin: top right;
+  transition:
+    opacity 260ms var(--ease-expo),
+    transform 260ms var(--ease-expo),
+    background-color var(--theme-duration) var(--ease-expo),
+    border-color var(--theme-duration) var(--ease-expo);
+}
+
+body.is-zen .audio-popover {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.97);
+}
+
+.audio-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.audio-popover-title {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.audio-source-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-hairline);
+  background: var(--btn-bg);
+  color: var(--fg-secondary);
+}
+
+body.audio-active .audio-source-tag {
+  color: var(--fg-primary);
+  border-color: var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+}
+
+.audio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.audio-src-btn {
+  height: auto;
+  min-height: 46px;
+  padding: 8px 11px;
+  border-radius: 13px;
+  justify-content: flex-start;
+  gap: 9px;
+  text-align: left;
+}
+
+.audio-src-btn--wide {
+  grid-column: span 2;
+}
+
+.audio-src-btn.is-selected {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  box-shadow: 0 0 18px var(--breath-glow);
+}
+
+.audio-src-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.audio-src-name {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-primary);
+  line-height: 1.2;
+}
+
+.audio-src-sub {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
+  line-height: 1.2;
+}
+
+.audio-device-row,
+.audio-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--btn-bg);
+  border: 1px solid var(--border-hairline);
+}
+
+.audio-row-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.audio-select {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  color: var(--fg-primary);
+  border: none;
+  font-family: var(--font-display);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.audio-select option {
+  background: var(--surface-solid);
+  color: var(--fg-primary);
+}
+
+.audio-mini-btn {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  flex-shrink: 0;
+}
+
+.audio-mini-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.audio-file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--fg-secondary);
+}
+
+.audio-sens-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.audio-sens-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.audio-val {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-primary);
+}
+
+.audio-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-hairline);
+  outline: none;
+  cursor: pointer;
+}
+
+.audio-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  border: 2px solid var(--surface-solid);
+  box-shadow: 0 0 10px var(--breath-glow-strong);
+  transition: transform 180ms var(--ease-spring);
+}
+
+.audio-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.16);
+}
+
+.audio-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  border: 2px solid var(--surface-solid);
+  box-shadow: 0 0 10px var(--breath-glow-strong);
+  cursor: pointer;
+}
+
+.audio-meter {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.audio-band {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.audio-band-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--fg-muted);
+}
+
+.audio-band-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border-hairline);
+  overflow: hidden;
+}
+
+.audio-band-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: var(--fg-primary);
+  transition: width 70ms linear;
+}
+
+.audio-status {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--fg-secondary);
+}
+
+body.audio-active #btn-audio {
+  border-color: var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  box-shadow: 0 0 calc(10px + var(--audio-energy, 0) * 18px) var(--breath-glow-strong);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Keyframe Choreography (Organic Respiration)
+   ========================================================================== */
+@keyframes btn-breathe-idle {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+    border-color: var(--border-hairline);
+  }
+  50% {
+    box-shadow: 0 0 16px -2px var(--breath-glow);
+    border-color: var(--border-breath);
+  }
+}
+
+@keyframes btn-breathe-primary {
+  0%, 100% {
+    transform: translate3d(calc(var(--mx, 0) * 3px), calc(var(--my, 0) * 2.4px), 0) scale(1);
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    transform: translate3d(calc(var(--mx, 0) * 3px), calc(var(--my, 0) * 2.4px), 0) scale(1.018);
+    box-shadow: 0 0 24px 0 var(--breath-glow-strong);
+  }
+}
+
+@keyframes aura-breathe {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.78;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes aura-ring-breathe {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes pill-breathe {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 14px -1px var(--breath-glow);
+  }
+}
+
+@keyframes thumb-breathe {
+  0%, 100% {
+    box-shadow: 0 0 0 1px var(--border-strong), 0 0 8px var(--breath-glow);
+  }
+  50% {
+    box-shadow: 0 0 0 1px var(--fg-primary), 0 0 16px var(--breath-glow-strong);
+  }
+}
+
+@keyframes dot-breathe {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.22);
+  }
+}
+
+@keyframes breath-exhale {
+  0% {
+    width: 12px;
+    height: 12px;
+    opacity: 0.85;
+  }
+  100% {
+    width: 118px;
+    height: 118px;
+    opacity: 0;
+  }
+}
+
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 1360px) {
+  .corner-hints,
+  .corner-metrics {
+    display: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .hud-top {
+    gap: 8px;
+  }
+
+  .brand-lockup {
+    padding: 7px 11px 7px 9px;
+    gap: 8px;
+  }
+
+  .brand-text {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+  }
+
+  .top-actions {
+    gap: 6px;
+  }
+
+  .breath-btn--compact {
+    padding: 0 10px;
+    height: 34px;
+  }
+
+  .breath-btn--theme {
+    padding: 0 11px 0 9px;
+    height: 34px;
+  }
+
+  .editorial-overlay {
+    top: 84px;
+    max-width: 260px;
+  }
+
+  .editorial-title {
+    font-size: 26px;
+  }
+
+  .editorial-coords,
+  .status-pill {
+    display: none;
+  }
+
+  .control-dock {
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 24px;
+    max-width: calc(100vw - 24px);
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .dock-sep {
+    display: none;
+  }
+
+  .top-actions .btn-label {
+    font-size: 11.5px;
+  }
+
+  #btn-audio .btn-label,
+  #btn-zen .btn-label {
+    display: none;
+  }
+
+  .audio-popover {
+    top: 66px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    padding: 13px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breath-btn,
+  .breath-btn::before,
+  .mode-slider,
+  .status-dot,
+  .brand-emblem,
+  #gravity-slider::-webkit-slider-thumb {
+    animation: none !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Fullscreen 3D Cosmic Gravity Field Viewport -->
+  <canvas id="cosmos-canvas" aria-label="三维宇宙重力场交互画布"></canvas>
+
+  <!-- Subtle radial depth vignette -->
+  <div class="vignette-layer" aria-hidden="true"></div>
+
+  <!-- Minimal HUD Container -->
+  <div class="hud-shell" id="hud-shell">
+    <!-- Top Instrument Bar -->
+    <header class="hud-top">
+      <div class="brand-lockup">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg viewBox="0 0 28 28" width="24" height="24" fill="none">
+            <circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1" opacity="0.32" />
+            <ellipse cx="14" cy="14" rx="12" ry="4.5" transform="rotate(-28 14 14)" stroke="currentColor" stroke-width="1.15" />
+            <ellipse cx="14" cy="14" rx="12" ry="4.5" transform="rotate(38 14 14)" stroke="currentColor" stroke-width="1" opacity="0.55" />
+            <circle cx="14" cy="14" r="2.2" fill="currentColor" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">AETHER</span>
+          <span class="brand-divider" aria-hidden="true">/</span>
+          <span class="brand-index">04</span>
+        </div>
+        <div class="status-pill" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="field-state-label">ATTRACT</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button
+          id="btn-audio"
+          type="button"
+          class="breath-btn breath-btn--compact"
+          aria-pressed="false"
+          aria-expanded="false"
+          aria-controls="audio-popover"
+          title="声场驱动与音源选择 (M 快速开关)"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
+              <circle cx="10" cy="10" r="2.2" fill="currentColor" />
+              <path d="M13.6 6.4a5.1 5.1 0 0 1 0 7.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity="0.65" />
+              <path d="M16.1 3.9a8.6 8.6 0 0 1 0 12.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity="0.32" />
+              <path d="M6.4 6.4a5.1 5.1 0 0 0 0 7.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity="0.65" />
+              <path d="M3.9 3.9a8.6 8.6 0 0 0 0 12.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" opacity="0.32" />
+            </svg>
+          </span>
+          <span class="btn-label" id="btn-audio-label">声场</span>
+        </button>
+
+        <button
+          id="btn-zen"
+          type="button"
+          class="breath-btn breath-btn--compact"
+          aria-pressed="false"
+          title="切换纯粹观测模式 (H)"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
+              <path d="M3 7V4.5C3 3.67 3.67 3 4.5 3H7M13 3H15.5C16.33 3 17 3.67 17 4.5V7M17 13V15.5C17 16.33 16.33 17 15.5 17H13M7 17H4.5C3.67 17 3 16.33 3 15.5V13" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+              <circle cx="10" cy="10" r="1.75" stroke="currentColor" stroke-width="1.2" />
+            </svg>
+          </span>
+          <span class="btn-label">纯粹</span>
+        </button>
+
+        <button
+          id="btn-theme"
+          type="button"
+          class="breath-btn breath-btn--theme"
+          aria-pressed="false"
+          title="切换黑白观测主题 (T)"
+        >
+          <span class="theme-glyph" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+              <circle class="glyph-orbit" cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.15" stroke-dasharray="2.4 2.4" />
+              <circle class="glyph-core" cx="10" cy="10" r="4" fill="currentColor" />
+              <circle class="glyph-eclipse" cx="12.1" cy="8.4" r="3.2" />
+            </svg>
+          </span>
+          <span class="btn-label" id="theme-label">深空 · 黑</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Audio Reactivity Source Popover -->
+    <section
+      class="audio-popover"
+      id="audio-popover"
+      hidden
+      aria-label="声场模式与音源设置"
+    >
+      <div class="audio-popover-head">
+        <span class="audio-popover-title">ACOUSTIC FIELD / 声场驱动</span>
+        <span class="audio-source-tag" id="audio-source-tag">OFF</span>
+      </div>
+
+      <div class="audio-grid" role="radiogroup" aria-label="音源选择">
+        <button
+          type="button"
+          class="breath-btn audio-src-btn is-selected"
+          data-source="off"
+          aria-checked="true"
+          role="radio"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <circle cx="10" cy="10" r="6" stroke="currentColor" stroke-width="1.25" opacity="0.55" />
+              <path d="M5.8 5.8L14.2 14.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="audio-src-text">
+            <span class="audio-src-name">关闭</span>
+            <span class="audio-src-sub">OFF</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="breath-btn audio-src-btn"
+          data-source="synth"
+          aria-checked="false"
+          role="radio"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <circle cx="10" cy="10" r="2.2" fill="currentColor" />
+              <circle cx="10" cy="10" r="5.5" stroke="currentColor" stroke-width="1.15" opacity="0.6" />
+              <circle cx="10" cy="10" r="8.2" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2" opacity="0.4" />
+            </svg>
+          </span>
+          <span class="audio-src-text">
+            <span class="audio-src-name">内生共振</span>
+            <span class="audio-src-sub">SYNTH</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="breath-btn audio-src-btn"
+          data-source="system"
+          aria-checked="false"
+          role="radio"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <rect x="2.5" y="3.5" width="15" height="10" rx="1.6" stroke="currentColor" stroke-width="1.25" />
+              <path d="M7 16.5h6M10 13.5v3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+              <path d="M7 8.5h1.5l1.2-2.2 1.4 4.4 1.2-2.2H13" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <span class="audio-src-text">
+            <span class="audio-src-name">电脑声音</span>
+            <span class="audio-src-sub">SYSTEM</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="breath-btn audio-src-btn"
+          data-source="mic"
+          aria-checked="false"
+          role="radio"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <rect x="7.5" y="2.8" width="5" height="8.5" rx="2.5" stroke="currentColor" stroke-width="1.25" />
+              <path d="M4.8 9.8a5.2 5.2 0 0 0 10.4 0M10 15v2.6M7.2 17.6h5.6" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="audio-src-text">
+            <span class="audio-src-name">外部声音</span>
+            <span class="audio-src-sub">MIC IN</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="breath-btn audio-src-btn audio-src-btn--wide"
+          data-source="file"
+          aria-checked="false"
+          role="radio"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+              <path d="M4 15.5V7l8-2.8v9.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="10.2" cy="14.2" r="2" stroke="currentColor" stroke-width="1.2" />
+              <path d="M15.5 6.5v7.2M13.5 9.2v3.8" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" opacity="0.65" />
+            </svg>
+          </span>
+          <span class="audio-src-text">
+            <span class="audio-src-name">本地音频</span>
+            <span class="audio-src-sub">LOCAL TRACK</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="audio-device-row" id="audio-device-row" hidden>
+        <label class="audio-row-label" for="audio-device-select">输入设备</label>
+        <select id="audio-device-select" class="audio-select"></select>
+      </div>
+
+      <div class="audio-file-row" id="audio-file-row" hidden>
+        <input type="file" id="audio-file-input" accept="audio/*" hidden />
+        <button type="button" id="btn-audio-pick" class="breath-btn breath-btn--compact audio-mini-btn">
+          <span>选择音轨</span>
+        </button>
+        <button type="button" id="btn-audio-play" class="breath-btn breath-btn--compact audio-mini-btn" disabled>
+          <span id="audio-play-label">播放</span>
+        </button>
+        <span class="audio-file-name" id="audio-file-name">未选择文件</span>
+      </div>
+
+      <div class="audio-sens-row">
+        <div class="audio-sens-head">
+          <span class="audio-row-label">声场灵敏度</span>
+          <span class="audio-val" id="audio-sens-value">1.2x</span>
+        </div>
+        <input
+          type="range"
+          id="audio-sensitivity"
+          class="slider-input audio-slider"
+          min="0.4"
+          max="2.5"
+          step="0.1"
+          value="1.2"
+          aria-label="声场灵敏度"
+        />
+      </div>
+
+      <div class="audio-meter" aria-hidden="true">
+        <div class="audio-band">
+          <span class="audio-band-label">LOW</span>
+          <div class="audio-band-track"><div class="audio-band-fill" id="meter-bass"></div></div>
+        </div>
+        <div class="audio-band">
+          <span class="audio-band-label">MID</span>
+          <div class="audio-band-track"><div class="audio-band-fill" id="meter-mid"></div></div>
+        </div>
+        <div class="audio-band">
+          <span class="audio-band-label">HIGH</span>
+          <div class="audio-band-track"><div class="audio-band-fill" id="meter-treble"></div></div>
+        </div>
+      </div>
+
+      <p class="audio-status" id="audio-status">选择音源后，宇宙时空网格、粒子轨道与奇点脉冲将随声波实时共振。</p>
+    </section>
+
+    <!-- Editorial Floating Spatial Header -->
+    <section class="editorial-overlay" aria-label="空间信息">
+      <div class="editorial-eyebrow">SPATIAL MANIFOLD // RELATIVISTIC FIELD</div>
+      <h1 class="editorial-title">GRAVITAS</h1>
+      <p class="editorial-subtitle">三维时空曲率与 N 体引力场交互观测</p>
+      <div class="editorial-coords" aria-hidden="true">
+        <span>YAW <b id="coord-yaw">000.0</b></span>
+        <span class="coord-dot"></span>
+        <span>PITCH <b id="coord-pitch">+18.0</b></span>
+        <span class="coord-dot"></span>
+        <span>DEPTH <b id="coord-depth">680</b></span>
+      </div>
+    </section>
+
+    <!-- Bottom Centered Floating Control Dock -->
+    <nav class="control-dock" aria-label="重力场控制面板">
+      <!-- Polarity Segmented Control -->
+      <div class="mode-switch" role="radiogroup" aria-label="引力场模式">
+        <div class="mode-slider" id="mode-slider" aria-hidden="true"></div>
+        <button
+          type="button"
+          class="mode-btn is-active"
+          data-mode="attract"
+          role="radio"
+          aria-checked="true"
+        >
+          <span class="mode-dot" aria-hidden="true"></span>
+          <span>引力</span>
+        </button>
+        <button
+          type="button"
+          class="mode-btn"
+          data-mode="repel"
+          role="radio"
+          aria-checked="false"
+        >
+          <span class="mode-dot" aria-hidden="true"></span>
+          <span>斥力</span>
+        </button>
+        <button
+          type="button"
+          class="mode-btn"
+          data-mode="zerog"
+          role="radio"
+          aria-checked="false"
+        >
+          <span class="mode-dot" aria-hidden="true"></span>
+          <span>零重</span>
+        </button>
+      </div>
+
+      <div class="dock-sep" aria-hidden="true"></div>
+
+      <!-- Precision Gravity Constant Control -->
+      <div class="strength-control">
+        <label for="gravity-slider" class="strength-label">场强</label>
+        <div class="slider-track-wrap">
+          <input
+            id="gravity-slider"
+            type="range"
+            min="0.2"
+            max="3.0"
+            step="0.1"
+            value="1.0"
+            aria-label="调节重力场强度"
+          >
+        </div>
+        <span class="strength-value" id="gravity-readout">1.0G</span>
+      </div>
+
+      <div class="dock-sep" aria-hidden="true"></div>
+
+      <!-- Breathing Action Triggers -->
+      <div class="dock-actions">
+        <button
+          id="btn-pulse"
+          type="button"
+          class="breath-btn breath-btn--primary"
+          title="发射三维引力脉冲波 (Space)"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
+              <circle cx="10" cy="10" r="2" fill="currentColor" />
+              <circle cx="10" cy="10" r="5.2" stroke="currentColor" stroke-width="1.2" opacity="0.7" />
+              <circle cx="10" cy="10" r="8.4" stroke="currentColor" stroke-width="1" stroke-dasharray="2.5 2.5" opacity="0.45" />
+            </svg>
+          </span>
+          <span class="btn-label">脉冲</span>
+        </button>
+
+        <button
+          id="btn-well"
+          type="button"
+          class="breath-btn"
+          title="在轨道空间置入额外引力奇点"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
+              <circle cx="10" cy="10" r="6.8" stroke="currentColor" stroke-width="1.15" opacity="0.65" />
+              <path d="M10 6.8V13.2M6.8 10H13.2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="btn-label">奇点</span>
+          <span class="btn-badge" id="well-count">1/3</span>
+        </button>
+
+        <button
+          id="btn-reset"
+          type="button"
+          class="breath-btn breath-btn--ghost"
+          title="重置三维视角与奇点场域 (R)"
+        >
+          <span class="btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
+              <path d="M4.5 9.5a5.5 5.5 0 1 1 1.4 3.7" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+              <path d="M4.2 6.2V9.7H7.7" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <span class="btn-label">归零</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Bottom Corner Micro Annotations -->
+    <aside class="corner-hints" aria-label="操作提示">
+      <span>拖拽旋转</span>
+      <span class="hint-sep" aria-hidden="true">·</span>
+      <span>滚轮缩放</span>
+      <span class="hint-sep" aria-hidden="true">·</span>
+      <span>长按聚能</span>
+      <span class="hint-sep" aria-hidden="true">·</span>
+      <span>双击置入奇点</span>
+    </aside>
+
+    <aside class="corner-metrics" aria-label="实时物理参数">
+      <span>天体 <b id="metric-bodies">520</b></span>
+      <span class="hint-sep" aria-hidden="true">·</span>
+      <span>奇点 <b id="metric-wells">1</b></span>
+      <span class="hint-sep" aria-hidden="true">·</span>
+      <span>曲率 <b id="metric-curvature">1.00</b></span>
+    </aside>
+  </div>
+
+  <!-- Minimal Restore Pill when Zen Mode is enabled -->
+  <button
+    id="btn-zen-restore"
+    type="button"
+    class="breath-btn breath-btn--compact zen-restore"
+    hidden
+    title="恢复交互界面 (H)"
+  >
+    <span class="btn-icon" aria-hidden="true">
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+        <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.25" />
+        <path d="M2.8 10C4.6 6.4 7.1 4.8 10 4.8C12.9 4.8 15.4 6.4 17.2 10C15.4 13.6 12.9 15.2 10 15.2C7.1 15.2 4.6 13.6 2.8 10Z" stroke="currentColor" stroke-width="1.15" opacity="0.7" />
+      </svg>
+    </span>
+    <span class="btn-label">显现界面</span>
+  </button>
+
+  <script>
+(function (global) {
+  'use strict';
+
+  function clamp(value, min, max) {
+    return value < min ? min : value > max ? max : value;
+  }
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function smoothstep(edge0, edge1, x) {
+    const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  function rgbaMix(darkRgb, lightRgb, themeT, alpha) {
+    const r = Math.round(lerp(darkRgb[0], lightRgb[0], themeT));
+    const g = Math.round(lerp(darkRgb[1], lightRgb[1], themeT));
+    const b = Math.round(lerp(darkRgb[2], lightRgb[2], themeT));
+    return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(4)})`;
+  }
+
+  class Camera3D {
+    constructor() {
+      this.defaultYaw = 0.44;
+      this.defaultPitch = 0.36;
+      this.defaultDistance = 680;
+
+      this.yaw = this.defaultYaw;
+      this.pitch = this.defaultPitch;
+      this.distance = this.defaultDistance;
+
+      this.targetYaw = this.defaultYaw;
+      this.targetPitch = this.defaultPitch;
+      this.targetDistance = this.defaultDistance;
+
+      this.parallaxX = 0;
+      this.parallaxY = 0;
+      this.targetParallaxX = 0;
+      this.targetParallaxY = 0;
+
+      this.autoDriftSpeed = 0.042;
+      this.userInteracting = false;
+
+      // Cached trig values per frame
+      this.cosY = Math.cos(this.yaw);
+      this.sinY = Math.sin(this.yaw);
+      this.cosP = Math.cos(this.pitch);
+      this.sinP = Math.sin(this.pitch);
+      this.fov = 760;
+    }
+
+    reset() {
+      this.targetYaw = this.defaultYaw;
+      this.targetPitch = this.defaultPitch;
+      this.targetDistance = this.defaultDistance;
+    }
+
+    orbit(deltaYaw, deltaPitch) {
+      this.targetYaw += deltaYaw;
+      this.targetPitch = clamp(this.targetPitch + deltaPitch, -1.18, 1.18);
+    }
+
+    zoom(delta) {
+      this.targetDistance = clamp(this.targetDistance + delta, 320, 1280);
+    }
+
+    setPointerParallax(normX, normY) {
+      this.targetParallaxX = clamp(normX, -1, 1) * 18;
+      this.targetParallaxY = clamp(normY, -1, 1) * 12;
+    }
+
+    update(dt, width, height) {
+      if (!this.userInteracting) {
+        this.targetYaw += this.autoDriftSpeed * dt;
+      }
+
+      const orbitFactor = 1 - Math.exp(-8.5 * dt);
+      const zoomFactor = 1 - Math.exp(-9.0 * dt);
+      const parallaxFactor = 1 - Math.exp(-6.0 * dt);
+
+      this.yaw = lerp(this.yaw, this.targetYaw, orbitFactor);
+      this.pitch = lerp(this.pitch, this.targetPitch, orbitFactor);
+      this.distance = lerp(this.distance, this.targetDistance, zoomFactor);
+
+      this.parallaxX = lerp(this.parallaxX, this.targetParallaxX, parallaxFactor);
+      this.parallaxY = lerp(this.parallaxY, this.targetParallaxY, parallaxFactor);
+
+      this.cosY = Math.cos(this.yaw);
+      this.sinY = Math.sin(this.yaw);
+      this.cosP = Math.cos(this.pitch);
+      this.sinP = Math.sin(this.pitch);
+
+      this.fov = Math.min(width, height) * 0.94;
+      if (this.fov < 420) this.fov = 420;
+    }
+
+    /**
+     * Project a 3D world coordinate into screen space + camera depth.
+     * World coordinates: +x right, +y up, +z forward into scene.
+     */
+    project(x, y, z, halfW, halfH, parallaxScale = 1) {
+      const x1 = x * this.cosY - z * this.sinY;
+      const z1 = x * this.sinY + z * this.cosY;
+
+      const y2 = y * this.cosP + z1 * this.sinP;
+      const z2 = -y * this.sinP + z1 * this.cosP;
+
+      const zCam = z2 + this.distance;
+      if (zCam <= 24) {
+        return null;
+      }
+
+      const scale = this.fov / zCam;
+      const px = this.parallaxX * parallaxScale;
+      const py = this.parallaxY * parallaxScale;
+
+      return {
+        x: halfW + (x1 - px) * scale,
+        y: halfH - (y2 - py) * scale,
+        z: zCam,
+        scale: scale
+      };
+    }
+
+    /**
+     * Project a 3D world vector for far background stars (rotation-dominant).
+     */
+    projectStar(x, y, z, halfW, halfH) {
+      const x1 = x * this.cosY - z * this.sinY;
+      const z1 = x * this.sinY + z * this.cosY;
+
+      const y2 = y * this.cosP + z1 * this.sinP;
+      const z2 = -y * this.sinP + z1 * this.cosP;
+
+      const zCam = z2 + this.distance * 0.45;
+      if (zCam <= 40) {
+        return null;
+      }
+
+      const scale = this.fov / zCam;
+      return {
+        x: halfW + (x1 - this.parallaxX * 0.25) * scale,
+        y: halfH - (y2 - this.parallaxY * 0.25) * scale,
+        z: zCam,
+        scale: scale
+      };
+    }
+
+    /**
+     * Intersect a screen pointer ray with the horizontal y=0 plane (with graceful edge-on fallback).
+     */
+    screenToPlane(sx, sy, halfW, halfH) {
+      const u = (sx - halfW) / this.fov;
+      const v = -(sy - halfH) / this.fov;
+
+      const denom = this.sinP - v * this.cosP;
+      let zCam;
+
+      if (Math.abs(denom) > 0.14) {
+        zCam = (this.distance * this.sinP + this.parallaxY * this.cosP) / denom;
+        if (zCam < 120 || zCam > 2400) {
+          zCam = this.distance;
+        }
+      } else {
+        zCam = this.distance;
+      }
+
+      const x1 = u * zCam + this.parallaxX;
+      const y2 = v * zCam + this.parallaxY;
+      const z2 = zCam - this.distance;
+
+      const y1 = y2 * this.cosP - z2 * this.sinP;
+      const z1 = y2 * this.sinP + z2 * this.cosP;
+
+      const x = x1 * this.cosY + z1 * this.sinY;
+      const z = -x1 * this.sinY + z1 * this.cosY;
+
+      return {
+        x: clamp(x, -460, 460),
+        y: clamp(y1, -180, 180),
+        z: clamp(z, -460, 460)
+      };
+    }
+  }
+
+  global.GravitasMath = {
+    clamp,
+    lerp,
+    smoothstep,
+    rgbaMix,
+    Camera3D
+  };
+})(window);
+
+  </script>
+  <script>
+(function (global) {
+  'use strict';
+
+  const { clamp, lerp, smoothstep, rgbaMix, Camera3D } = global.GravitasMath;
+
+  const THEME_PALETTES = {
+    darkBgCenter: [9, 10, 14],
+    darkBgEdge: [4, 4, 6],
+    lightBgCenter: [246, 245, 240],
+    lightBgEdge: [232, 230, 223],
+
+    darkInk: [244, 245, 250],
+    lightInk: [13, 14, 18],
+
+    darkMuted: [168, 174, 190],
+    lightMuted: [84, 88, 98],
+
+    darkCore: [3, 3, 5],
+    lightCore: [250, 249, 245]
+  };
+
+  class CosmosEngine {
+    constructor(canvas, callbacks = {}) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d', { alpha: false });
+      this.callbacks = callbacks;
+
+      this.camera = new Camera3D();
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      // Theme state: 0 = dark, 1 = light
+      this.themeTarget = 0;
+      this.themeT = 0;
+
+      // Gravity state
+      this.mode = 'attract'; // 'attract' | 'repel' | 'zerog'
+      this.strength = 1.0;
+      this.effectiveModeSign = 1.0; // smoothly transitions between +1, -1, 0
+
+      // Interactive pointer state
+      this.pointerScreen = { x: this.width * 0.5, y: this.height * 0.5, active: false };
+      this.cursorWorld = { x: 0, y: 0, z: 0 };
+      this.smoothCursorWorld = { x: 0, y: 0, z: 0 };
+      this.cursorInfluence = 0;
+
+      this.isPointerDown = false;
+      this.pointerDownTime = 0;
+      this.pointerMoveDist = 0;
+      this.lastPointer = { x: 0, y: 0 };
+      this.isCompressing = false;
+      this.holdCharge = 0;
+
+      // Scene data
+      this.stars = [];
+      this.particles = [];
+      this.wells = [];
+      this.pulses = [];
+      this.latticeSize = 32;
+      this.latticeRadius = 460;
+      this.latticeVerts = [];
+      this.astroRings = [];
+      this.renderQueue = [];
+
+      // Telemetry tracking
+      this.time = 0;
+      this.lastFrameTime = performance.now();
+      this.telemetryTimer = 0;
+      this.currentCurvature = 1.0;
+      this.running = false;
+      this.rafId = null;
+
+      // Audio reactivity state (low/mid/high bands + beat transient)
+      this.audioData = {
+        active: false,
+        bass: 0,
+        mid: 0,
+        treble: 0,
+        energy: 0,
+        beat: 0,
+      };
+      this.audioBeatCooldown = 0;
+
+      this.initScene();
+      this.handleResize();
+      this.bindEvents();
+    }
+
+    initScene() {
+      this.initStars(620);
+      this.initLattice();
+      this.initWells();
+      this.initParticles(520);
+      this.initAstroRings();
+    }
+
+    initStars(count) {
+      this.stars = [];
+      const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < count; i++) {
+        const yNorm = 1 - (i / (count - 1)) * 2;
+        const radiusAtY = Math.sqrt(Math.max(0, 1 - yNorm * yNorm));
+        const theta = goldenAngle * i + (Math.random() - 0.5) * 0.35;
+        const dist = 950 + Math.random() * 1250;
+
+        this.stars.push({
+          x: Math.cos(theta) * radiusAtY * dist,
+          y: yNorm * dist,
+          z: Math.sin(theta) * radiusAtY * dist,
+          size: 0.65 + Math.pow(Math.random(), 2.2) * 1.9,
+          baseAlpha: 0.18 + Math.random() * 0.68,
+          phase: Math.random() * Math.PI * 2,
+          twinkleSpeed: 0.7 + Math.random() * 1.6,
+          glint: i % 23 === 0
+        });
+      }
+    }
+
+    initLattice() {
+      this.latticeVerts = [];
+      const n = this.latticeSize;
+      const span = this.latticeRadius * 2;
+      for (let iz = 0; iz <= n; iz++) {
+        const row = [];
+        const gz = -this.latticeRadius + (iz / n) * span;
+        for (let ix = 0; ix <= n; ix++) {
+          const gx = -this.latticeRadius + (ix / n) * span;
+          const r = Math.hypot(gx, gz);
+          const radialFade = 1 - smoothstep(this.latticeRadius * 0.62, this.latticeRadius, r);
+          row.push({
+            baseX: gx,
+            baseZ: gz,
+            r,
+            radialFade,
+            x: gx,
+            y: 0,
+            z: gz,
+            curvature: 0,
+            px: 0,
+            py: 0,
+            pz: 0,
+            visible: false
+          });
+        }
+        this.latticeVerts.push(row);
+      }
+    }
+
+    initWells() {
+      this.wells = [
+        {
+          id: 0,
+          isPrimary: true,
+          x: 0,
+          y: 0,
+          z: 0,
+          mass: 1.0,
+          coreRadius: 27,
+          orbitRadius: 0,
+          orbitAngle: 0,
+          orbitSpeed: 0,
+          tiltX: 0,
+          tiltZ: 0
+        }
+      ];
+      this.notifyWellChange();
+    }
+
+    initParticles(count) {
+      this.particles = [];
+      for (let i = 0; i < count; i++) {
+        this.particles.push(this.createParticle(true));
+      }
+    }
+
+    createParticle(initialSpread = false) {
+      const r = initialSpread
+        ? 56 + Math.pow(Math.random(), 0.78) * 365
+        : 210 + Math.random() * 195;
+      const angle = Math.random() * Math.PI * 2;
+      const diskThickness = (Math.random() - 0.5) * (24 + r * 0.25);
+      const x = Math.cos(angle) * r;
+      const z = Math.sin(angle) * r;
+      const y = diskThickness;
+
+      // Balanced Keplerian tangential velocity matched to G = 1,800,000
+      const speed = Math.sqrt(1800000 / (r + 24)) * (0.84 + Math.random() * 0.3);
+      const tangentX = -Math.sin(angle);
+      const tangentZ = Math.cos(angle);
+
+      return {
+        x,
+        y,
+        z,
+        px: x,
+        py: y,
+        pz: z,
+        vx: tangentX * speed + (Math.random() - 0.5) * 14,
+        vy: (Math.random() - 0.5) * 20,
+        vz: tangentZ * speed + (Math.random() - 0.5) * 14,
+        size: 0.9 + Math.pow(Math.random(), 1.9) * 2.1,
+        alpha: 0.34 + Math.random() * 0.66,
+        seed: Math.random() * Math.PI * 2
+      };
+    }
+
+    initAstroRings() {
+      this.astroRings = [
+        { radius: 56, tiltX: 0.36, tiltZ: -0.22, speed: 0.22, angle: 0.4, segments: 72, opacity: 0.42 },
+        { radius: 88, tiltX: -0.48, tiltZ: 0.31, speed: -0.15, angle: 1.8, segments: 84, opacity: 0.26 },
+        { radius: 130, tiltX: 0.16, tiltZ: 0.52, speed: 0.09, angle: 2.9, segments: 96, opacity: 0.16 }
+      ];
+    }
+
+    setTheme(theme) {
+      this.themeTarget = theme === 'light' ? 1 : 0;
+    }
+
+    setMode(mode) {
+      this.mode = mode;
+      // Gentle impulse nudge when changing polarity so motion responds visibly
+      if (mode === 'repel') {
+        this.triggerPulse(0, 0, 0, 0.55);
+      }
+    }
+
+    setStrength(val) {
+      this.strength = clamp(parseFloat(val) || 1.0, 0.2, 3.0);
+    }
+
+    setAudioData(data) {
+      if (!data || !data.active) {
+        this.audioData.active = false;
+        this.audioData.bass = 0;
+        this.audioData.mid = 0;
+        this.audioData.treble = 0;
+        this.audioData.energy = 0;
+        this.audioData.beat = 0;
+        return;
+      }
+      this.audioData.active = true;
+      this.audioData.bass = clamp(data.bass || 0, 0, 1.8);
+      this.audioData.mid = clamp(data.mid || 0, 0, 1.8);
+      this.audioData.treble = clamp(data.treble || 0, 0, 1.8);
+      this.audioData.energy = clamp(data.energy || 0, 0, 1.8);
+      this.audioData.beat = clamp(data.beat || 0, 0, 1.5);
+    }
+
+    triggerPulse(ox = 0, oy = 0, oz = 0, power = 1.0) {
+      this.pulses.push({
+        x: ox,
+        y: oy,
+        z: oz,
+        radius: 14,
+        maxRadius: 620,
+        speed: 340 + power * 90,
+        power: clamp(power, 0.35, 1.8),
+        age: 0
+      });
+
+      // Immediate 3D particle impulse outward from pulse origin
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        const dx = p.x - ox;
+        const dy = p.y - oy;
+        const dz = p.z - oz;
+        const dist = Math.hypot(dx, dy, dz) + 18;
+        const falloff = Math.exp(-dist / 320);
+        const kick = (320 * power * falloff) / (dist * 0.015 + 1);
+        p.vx += (dx / dist) * kick;
+        p.vy += (dy / dist) * kick * 0.8 + (Math.random() - 0.5) * 24 * falloff;
+        p.vz += (dz / dist) * kick;
+      }
+    }
+
+    addWell(worldPos = null) {
+      if (this.wells.length >= 3) {
+        // Cycle oldest secondary well to new position if already 3
+        const target = this.wells[1];
+        this.wells.splice(1, 1);
+        this.wells.push(target);
+        const pos = worldPos || this.randomOrbitPos();
+        this.configureSecondaryWell(target, pos);
+        this.triggerPulse(target.x, target.y, target.z, 0.65);
+        this.notifyWellChange();
+        return this.wells.length;
+      }
+
+      const pos = worldPos || this.randomOrbitPos();
+      const well = {
+        id: Date.now() + Math.random(),
+        isPrimary: false,
+        x: pos.x,
+        y: pos.y,
+        z: pos.z,
+        mass: 0.58,
+        coreRadius: 15,
+        orbitRadius: Math.max(115, Math.hypot(pos.x, pos.z)),
+        orbitAngle: Math.atan2(pos.z, pos.x),
+        orbitSpeed: (0.28 + Math.random() * 0.16) * (this.wells.length % 2 === 0 ? -1 : 1),
+        tiltX: (Math.random() - 0.5) * 0.32,
+        tiltZ: (Math.random() - 0.5) * 0.32
+      };
+      this.wells.push(well);
+      this.triggerPulse(well.x, well.y, well.z, 0.72);
+      this.notifyWellChange();
+      return this.wells.length;
+    }
+
+    configureSecondaryWell(well, pos) {
+      well.x = pos.x;
+      well.y = pos.y;
+      well.z = pos.z;
+      well.orbitRadius = clamp(Math.hypot(pos.x, pos.z), 110, 320);
+      well.orbitAngle = Math.atan2(pos.z, pos.x);
+    }
+
+    randomOrbitPos() {
+      const angle = Math.random() * Math.PI * 2;
+      const r = 155 + Math.random() * 135;
+      return {
+        x: Math.cos(angle) * r,
+        y: (Math.random() - 0.5) * 32,
+        z: Math.sin(angle) * r
+      };
+    }
+
+    reset() {
+      this.camera.reset();
+      this.initWells();
+      this.pulses = [];
+      this.initParticles(520);
+      this.triggerPulse(0, 0, 0, 0.5);
+    }
+
+    notifyWellChange() {
+      if (this.callbacks.onWellCountChange) {
+        this.callbacks.onWellCountChange(this.wells.length);
+      }
+    }
+
+    handleResize() {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.canvas.width = Math.floor(this.width * this.dpr);
+      this.canvas.height = Math.floor(this.height * this.dpr);
+      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    }
+
+    bindEvents() {
+      window.addEventListener('resize', () => this.handleResize());
+
+      document.addEventListener('selectstart', (e) => e.preventDefault());
+      document.addEventListener('contextmenu', (e) => e.preventDefault());
+      document.addEventListener('selectionchange', () => {
+        const sel = window.getSelection && window.getSelection();
+        if (sel && sel.rangeCount > 0) sel.removeAllRanges();
+      });
+      this.canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+
+      let lastTouchTapTime = 0;
+      let lastTouchTapX = 0;
+      let lastTouchTapY = 0;
+      let lastWellSpawnMs = 0;
+
+      this.canvas.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0 && e.pointerType === 'mouse') return;
+        e.preventDefault();
+        this.isPointerDown = true;
+        this.pointerDownTime = performance.now();
+        this.pointerMoveDist = 0;
+        this.lastPointer.x = e.clientX;
+        this.lastPointer.y = e.clientY;
+        this.pointerScreen.x = e.clientX;
+        this.pointerScreen.y = e.clientY;
+        this.pointerScreen.active = true;
+        this.canvas.setPointerCapture(e.pointerId);
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        this.pointerScreen.x = e.clientX;
+        this.pointerScreen.y = e.clientY;
+        this.pointerScreen.active = true;
+
+        const normX = (e.clientX / this.width - 0.5) * 2;
+        const normY = (e.clientY / this.height - 0.5) * 2;
+        this.camera.setPointerParallax(normX, normY);
+
+        if (this.callbacks.onPointerParallax) {
+          this.callbacks.onPointerParallax(normX, normY);
+        }
+
+        if (this.isPointerDown) {
+          const dx = e.clientX - this.lastPointer.x;
+          const dy = e.clientY - this.lastPointer.y;
+          this.pointerMoveDist += Math.hypot(dx, dy);
+          this.lastPointer.x = e.clientX;
+          this.lastPointer.y = e.clientY;
+
+          if (this.pointerMoveDist > 6) {
+            this.isCompressing = false;
+            this.holdCharge = 0;
+            this.camera.userInteracting = true;
+            document.body.classList.add('is-dragging');
+            this.camera.orbit(-dx * 0.0054, dy * 0.0046);
+          }
+        }
+      });
+
+      const releasePointer = (e) => {
+        if (!this.isPointerDown) return;
+        const now = performance.now();
+        if (this.isCompressing && this.holdCharge > 0.14) {
+          this.triggerPulse(
+            this.smoothCursorWorld.x,
+            this.smoothCursorWorld.y,
+            this.smoothCursorWorld.z,
+            0.55 + this.holdCharge * 1.15
+          );
+          if (this.callbacks.onShockwave) {
+            this.callbacks.onShockwave(this.holdCharge);
+          }
+        } else if (e && e.pointerType === 'touch' && this.pointerMoveDist < 12 && now - this.pointerDownTime < 280) {
+          if (now - lastTouchTapTime < 340 && Math.hypot(e.clientX - lastTouchTapX, e.clientY - lastTouchTapY) < 36) {
+            lastTouchTapTime = 0;
+            lastWellSpawnMs = now;
+            const worldPos = this.camera.screenToPlane(
+              e.clientX,
+              e.clientY,
+              this.width * 0.5,
+              this.height * 0.5
+            );
+            this.addWell(worldPos);
+            if (this.callbacks.onWellSpawned) {
+              this.callbacks.onWellSpawned();
+            }
+          } else {
+            lastTouchTapTime = now;
+            lastTouchTapX = e.clientX;
+            lastTouchTapY = e.clientY;
+          }
+        }
+        this.isPointerDown = false;
+        this.isCompressing = false;
+        this.camera.userInteracting = false;
+        document.body.classList.remove('is-dragging');
+        if (e && e.pointerId !== undefined && this.canvas.hasPointerCapture(e.pointerId)) {
+          this.canvas.releasePointerCapture(e.pointerId);
+        }
+      };
+
+      window.addEventListener('pointerup', releasePointer);
+      window.addEventListener('pointercancel', releasePointer);
+
+      this.canvas.addEventListener('pointerleave', () => {
+        if (!this.isPointerDown) {
+          this.pointerScreen.active = false;
+        }
+      });
+
+      this.canvas.addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault();
+          this.camera.zoom(e.deltaY * 0.48);
+        },
+        { passive: false }
+      );
+
+      this.canvas.addEventListener('dblclick', (e) => {
+        if (performance.now() - lastWellSpawnMs < 350) return;
+        const worldPos = this.camera.screenToPlane(
+          e.clientX,
+          e.clientY,
+          this.width * 0.5,
+          this.height * 0.5
+        );
+        this.addWell(worldPos);
+        if (this.callbacks.onWellSpawned) {
+          this.callbacks.onWellSpawned();
+        }
+      });
+    }
+
+    start() {
+      if (this.running) return;
+      this.running = true;
+      this.lastFrameTime = performance.now();
+      const tick = (now) => {
+        if (!this.running) return;
+        const dt = Math.min((now - this.lastFrameTime) / 1000, 0.035);
+        this.lastFrameTime = now;
+        this.update(dt, now);
+        this.render();
+        this.rafId = requestAnimationFrame(tick);
+      };
+      this.rafId = requestAnimationFrame(tick);
+    }
+
+    update(dt, now) {
+      this.time += dt;
+
+      // Smooth black/white transition
+      const themeLerp = 1 - Math.exp(-5.8 * dt);
+      this.themeT = lerp(this.themeT, this.themeTarget, themeLerp);
+
+      // Smooth gravity mode transitions
+      const targetSign = this.mode === 'attract' ? 1 : this.mode === 'repel' ? -1 : 0;
+      this.effectiveModeSign = lerp(this.effectiveModeSign, targetSign, 1 - Math.exp(-4.5 * dt));
+
+      // Update camera
+      this.camera.update(dt, this.width, this.height);
+
+      // Update cursor world projection & hold compression charge
+      if (this.pointerScreen.active) {
+        const projWorld = this.camera.screenToPlane(
+          this.pointerScreen.x,
+          this.pointerScreen.y,
+          this.width * 0.5,
+          this.height * 0.5
+        );
+        this.cursorWorld = projWorld;
+        const follow = 1 - Math.exp(-14 * dt);
+        this.smoothCursorWorld.x = lerp(this.smoothCursorWorld.x, projWorld.x, follow);
+        this.smoothCursorWorld.y = lerp(this.smoothCursorWorld.y, projWorld.y, follow);
+        this.smoothCursorWorld.z = lerp(this.smoothCursorWorld.z, projWorld.z, follow);
+        this.cursorInfluence = lerp(this.cursorInfluence, 1, 1 - Math.exp(-8 * dt));
+      } else {
+        this.cursorInfluence = lerp(this.cursorInfluence, 0, 1 - Math.exp(-4 * dt));
+      }
+
+      if (this.isPointerDown && this.pointerMoveDist <= 6 && now - this.pointerDownTime > 170) {
+        this.isCompressing = true;
+        this.holdCharge = clamp(this.holdCharge + dt * 0.92, 0, 1);
+      } else if (!this.isCompressing) {
+        this.holdCharge = lerp(this.holdCharge, 0, 1 - Math.exp(-10 * dt));
+      }
+
+      // Orbit secondary gravity wells
+      for (let i = 1; i < this.wells.length; i++) {
+        const w = this.wells[i];
+        const speedMult = this.mode === 'zerog' ? 0.18 : 0.72 + this.strength * 0.28;
+        w.orbitAngle += w.orbitSpeed * speedMult * dt;
+        const targetX = Math.cos(w.orbitAngle) * w.orbitRadius;
+        const targetZ = Math.sin(w.orbitAngle) * w.orbitRadius;
+        const targetY = Math.sin(w.orbitAngle * 1.5) * 32 * Math.sin(w.tiltX + 0.3);
+        w.x = lerp(w.x, targetX, 1 - Math.exp(-4 * dt));
+        w.y = lerp(w.y, targetY, 1 - Math.exp(-4 * dt));
+        w.z = lerp(w.z, targetZ, 1 - Math.exp(-4 * dt));
+      }
+
+      // Update expanding pulse waves
+      for (let i = this.pulses.length - 1; i >= 0; i--) {
+        const pulse = this.pulses[i];
+        pulse.age += dt;
+        pulse.radius += pulse.speed * dt;
+        if (pulse.radius > pulse.maxRadius) {
+          this.pulses.splice(i, 1);
+        }
+      }
+
+      // Audio beat pulse & ring modulation
+      if (this.audioBeatCooldown > 0) {
+        this.audioBeatCooldown = Math.max(0, this.audioBeatCooldown - dt);
+      }
+      if (this.audioData.active && this.audioData.beat > 0.52 && this.audioBeatCooldown <= 0) {
+        this.triggerPulse(0, 0, 0, clamp(0.45 + this.audioData.beat * 0.72, 0.45, 1.35));
+        this.audioBeatCooldown = 0.26;
+      }
+
+      // Update astro rings
+      const trebleSpinBoost = this.audioData.active ? (this.audioData.treble * 1.45 + this.audioData.energy * 0.55) : 0;
+      for (let i = 0; i < this.astroRings.length; i++) {
+        const ring = this.astroRings[i];
+        const baseMult = this.mode === 'zerog' ? 0.25 : 0.65 + this.strength * 0.35;
+        const mult = baseMult + trebleSpinBoost * (0.65 + i * 0.25);
+        ring.angle += ring.speed * mult * dt;
+      }
+
+      // Update 3D particles physics
+      this.updateParticles(dt);
+
+      // Update spacetime lattice curvature
+      this.updateLattice();
+
+      // Throttled UI telemetry sync
+      this.telemetryTimer += dt;
+      if (this.telemetryTimer >= 0.08) {
+        this.telemetryTimer = 0;
+        if (this.callbacks.onTelemetry) {
+          this.callbacks.onTelemetry({
+            yawDeg: ((this.camera.yaw * 180) / Math.PI) % 360,
+            pitchDeg: (this.camera.pitch * 180) / Math.PI,
+            depth: Math.round(this.camera.distance),
+            bodies: this.particles.length,
+            wells: this.wells.length,
+            curvature: this.currentCurvature
+          });
+        }
+      }
+    }
+
+    updateParticles(dt) {
+      const audio = this.audioData;
+      const bassBoost = audio.active ? audio.bass : 0;
+      const midBoost = audio.active ? audio.mid : 0;
+      const trebleBoost = audio.active ? audio.treble : 0;
+      const G = 1800000 * this.strength * (1 + bassBoost * 0.55);
+      const sign = this.effectiveModeSign;
+      const cursorMass =
+        this.cursorInfluence * (0.36 + this.holdCharge * 2.4) * this.strength;
+      const hasCursor = cursorMass > 0.02;
+
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        p.px = p.x;
+        p.py = p.y;
+        p.pz = p.z;
+
+        let ax = 0;
+        let ay = 0;
+        let az = 0;
+
+        // Forces from singularity wells
+        if (Math.abs(sign) > 0.01) {
+          for (let wIdx = 0; wIdx < this.wells.length; wIdx++) {
+            const w = this.wells[wIdx];
+            const dx = w.x - p.x;
+            const dy = w.y - p.y;
+            const dz = w.z - p.z;
+            const distSq = dx * dx + dy * dy + dz * dz + 1800;
+            const dist = Math.sqrt(distSq);
+
+            if (sign > 0 && w.isPrimary && dist < 39 && !this.isCompressing) {
+              const respawn = this.createParticle(false);
+              p.x = respawn.x;
+              p.y = respawn.y;
+              p.z = respawn.z;
+              p.px = p.x;
+              p.py = p.y;
+              p.pz = p.z;
+              p.vx = respawn.vx;
+              p.vy = respawn.vy;
+              p.vz = respawn.vz;
+              continue;
+            }
+
+            const force = (G * w.mass * sign) / distSq;
+            ax += (dx / dist) * force;
+            ay += (dy / dist) * force;
+            az += (dz / dist) * force;
+
+            // Gentle Kerr frame-dragging tangential curl in attract mode
+            if (sign > 0) {
+              const swirl = (1650 * this.strength * (1 + midBoost * 1.15 + trebleBoost * 0.45) * w.mass * sign) / (dist + 60);
+              ax += (-dz / dist) * swirl;
+              az += (dx / dist) * swirl;
+            }
+          }
+        }
+
+        // Force from live cursor gravity lens
+        if (hasCursor) {
+          const cdx = this.smoothCursorWorld.x - p.x;
+          const cdy = this.smoothCursorWorld.y - p.y;
+          const cdz = this.smoothCursorWorld.z - p.z;
+          const cDistSq = cdx * cdx + cdy * cdy + cdz * cdz + 2600;
+          const cDist = Math.sqrt(cDistSq);
+          const cursorSign = this.isCompressing ? 1.45 : sign === 0 ? 0.45 : sign;
+          const cForce = (G * 0.55 * cursorMass * cursorSign) / cDistSq;
+          ax += (cdx / cDist) * cForce;
+          ay += (cdy / cDist) * cForce;
+          az += (cdz / cDist) * cForce;
+
+          if (this.isCompressing) {
+            const cSwirl = (4200 * this.holdCharge * this.strength) / (cDist + 45);
+            ax += (-cdz / cDist) * cSwirl;
+            az += (cdx / cDist) * cSwirl;
+          }
+        }
+
+        // Zero-G serene cosmic curl drift
+        if (this.mode === 'zerog') {
+          const driftTime = this.time * 0.6 + p.seed;
+          ax += Math.sin(driftTime + p.z * 0.012) * 26;
+          ay += Math.cos(driftTime * 0.8 + p.x * 0.012) * 18;
+          az += Math.cos(driftTime + p.y * 0.012) * 26;
+        } else {
+          // Subtle accretion disk vertical restoring force keeps 3D thickness balanced
+          ay += -p.y * 0.48 * Math.abs(sign);
+        }
+
+        // Acoustic harmonic cymatics wave when audio field is active
+        if (audio.active) {
+          const radial = Math.sqrt(p.x * p.x + p.z * p.z) + 1;
+          const wavePhase = this.time * (3.2 + midBoost * 3.4) - radial * 0.016 + p.seed * 1.5;
+          ay += Math.sin(wavePhase) * (midBoost * 145 + trebleBoost * 80);
+          if (bassBoost > 0.02) {
+            const radialPulse = Math.cos(this.time * 2.4 - radial * 0.014) * bassBoost * 95;
+            ax += (p.x / radial) * radialPulse;
+            az += (p.z / radial) * radialPulse;
+          }
+        }
+
+        // Soft outer spherical containment shell
+        const rAll = Math.hypot(p.x, p.y, p.z);
+        if (rAll > 410) {
+          const pullBack = (rAll - 410) * (this.mode === 'repel' ? 2.4 : 1.4);
+          ax -= (p.x / rAll) * pullBack;
+          ay -= (p.y / rAll) * pullBack;
+          az -= (p.z / rAll) * pullBack;
+        }
+
+        // Integrate velocity with light relativistic damping
+        p.vx += ax * dt;
+        p.vy += ay * dt;
+        p.vz += az * dt;
+
+        const damping = this.mode === 'zerog' ? Math.exp(-0.38 * dt) : Math.exp(-0.085 * dt);
+        p.vx *= damping;
+        p.vy *= damping;
+        p.vz *= damping;
+
+        // Clamp extreme velocity
+        const speed = Math.hypot(p.vx, p.vy, p.vz);
+        if (speed > 440) {
+          const ratio = 440 / speed;
+          p.vx *= ratio;
+          p.vy *= ratio;
+          p.vz *= ratio;
+        }
+
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.z += p.vz * dt;
+      }
+    }
+
+    updateLattice() {
+      const halfW = this.width * 0.5;
+      const halfH = this.height * 0.5;
+      const sign = this.effectiveModeSign;
+      const audio = this.audioData;
+      const bass = audio.active ? audio.bass : 0;
+      const mid = audio.active ? audio.mid : 0;
+      const treble = audio.active ? audio.treble : 0;
+      const waveAmp = audio.active ? bass * 34 + mid * 20 + treble * 10 : 0;
+      const depthAmp = 76 * this.strength * (1 + bass * 0.65);
+      const cursorDepth =
+        this.cursorInfluence * (22 + this.holdCharge * 92) * this.strength;
+
+      let maxCurv = 0;
+
+      for (let iz = 0; iz <= this.latticeSize; iz++) {
+        const row = this.latticeVerts[iz];
+        for (let ix = 0; ix <= this.latticeSize; ix++) {
+          const v = row[ix];
+          if (v.radialFade <= 0.005) {
+            v.visible = false;
+            continue;
+          }
+
+          let dispY = Math.sin(this.time * 0.9 + v.r * 0.015) * 2.2;
+          if (audio.active) {
+            dispY += Math.sin(this.time * 4.2 - v.r * 0.026) * waveAmp;
+            dispY += Math.cos(this.time * 2.8 + v.baseX * 0.014) * Math.sin(v.baseZ * 0.014) * (mid * 18);
+          }
+          let shiftX = 0;
+          let shiftZ = 0;
+
+          // Singularity wells spacetime deformation
+          if (Math.abs(sign) > 0.005) {
+            for (let wIdx = 0; wIdx < this.wells.length; wIdx++) {
+              const w = this.wells[wIdx];
+              const dx = w.x - v.baseX;
+              const dz = w.z - v.baseZ;
+              const d = Math.sqrt(dx * dx + dz * dz + 1500);
+              const potential = (depthAmp * w.mass * 46) / d;
+
+              dispY -= potential * sign;
+
+              // Radial spacetime pinch toward well
+              const pinch = clamp((potential * 0.16 * sign) / d, -0.24, 0.30);
+              shiftX += dx * pinch;
+              shiftZ += dz * pinch;
+            }
+          }
+
+          // Cursor localized dimple
+          if (cursorDepth > 1) {
+            const cdx = this.smoothCursorWorld.x - v.baseX;
+            const cdz = this.smoothCursorWorld.z - v.baseZ;
+            const cd = Math.sqrt(cdx * cdx + cdz * cdz + 1850);
+            const cPot = (cursorDepth * 26) / cd;
+            const cSign = this.isCompressing ? 1.15 : sign === 0 ? 0.5 : sign;
+            dispY -= cPot * cSign;
+            const cPinch = clamp((cPot * 0.12 * cSign) / cd, -0.18, 0.24);
+            shiftX += cdx * cPinch;
+            shiftZ += cdz * cPinch;
+          }
+
+          // Pulse waves soliton ripples
+          for (let pIdx = 0; pIdx < this.pulses.length; pIdx++) {
+            const pulse = this.pulses[pIdx];
+            const pd = Math.hypot(v.baseX - pulse.x, v.baseZ - pulse.z);
+            const diff = pd - pulse.radius;
+            const envelope = Math.exp(-(diff * diff) / 1450) * (1 - pulse.radius / pulse.maxRadius);
+            dispY += Math.cos(diff * 0.085) * 26 * pulse.power * envelope;
+          }
+
+          v.x = v.baseX + shiftX;
+          v.y = clamp(dispY, -175, 130) * v.radialFade;
+          v.z = v.baseZ + shiftZ;
+          v.curvature = Math.abs(v.y) / 130;
+          if (v.curvature > maxCurv) maxCurv = v.curvature;
+
+          const proj = this.camera.project(v.x, v.y, v.z, halfW, halfH, 1.0);
+          if (proj) {
+            v.px = proj.x;
+            v.py = proj.y;
+            v.pz = proj.z;
+            v.visible = true;
+          } else {
+            v.visible = false;
+          }
+        }
+      }
+
+      this.currentCurvature = lerp(
+        this.currentCurvature,
+        this.mode === 'zerog' ? 0.08 + this.holdCharge * 0.8 : 0.45 + maxCurv * 1.45,
+        0.16
+      );
+    }
+
+    render() {
+      const ctx = this.ctx;
+      const w = this.width;
+      const h = this.height;
+      const halfW = w * 0.5;
+      const halfH = h * 0.5;
+      const t = this.themeT;
+
+      // 1. Background Void / Alabaster Space Gradient
+      const bgGrad = ctx.createRadialGradient(
+        halfW,
+        halfH * 0.92,
+        20,
+        halfW,
+        halfH,
+        Math.max(w, h) * 0.85
+      );
+      bgGrad.addColorStop(0, rgbaMix(THEME_PALETTES.darkBgCenter, THEME_PALETTES.lightBgCenter, t, 1));
+      bgGrad.addColorStop(1, rgbaMix(THEME_PALETTES.darkBgEdge, THEME_PALETTES.lightBgEdge, t, 1));
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // 2. Deep 3D Celestial Sphere Stars
+      this.renderStars(ctx, halfW, halfH, t);
+
+      // 3. Deformable 3D Spacetime Curvature Lattice
+      this.renderLattice(ctx, t);
+
+      // 4. Cursor Gravitational Lens Reticle (subtle geometric targeting ring)
+      this.renderCursorLens(ctx, halfW, halfH, t);
+
+      // 5. Depth-Sorted 3D Objects: Singularity Cores, Gyroscopic Rings, Accretion Particles
+      this.renderDepthSortedCosmos(ctx, halfW, halfH, t);
+    }
+
+    renderStars(ctx, halfW, halfH, t) {
+      const rotAngle = this.time * 0.008;
+      const cosR = Math.cos(rotAngle);
+      const sinR = Math.sin(rotAngle);
+
+      for (let i = 0; i < this.stars.length; i++) {
+        const s = this.stars[i];
+        const rx = s.x * cosR - s.z * sinR;
+        const rz = s.x * sinR + s.z * cosR;
+        const proj = this.camera.projectStar(rx, s.y, rz, halfW, halfH);
+        if (!proj) continue;
+        if (proj.x < -12 || proj.x > this.width + 12 || proj.y < -12 || proj.y > this.height + 12) {
+          continue;
+        }
+
+        const trebleMod = this.audioData.active ? this.audioData.treble : 0;
+        const twinkle = clamp(0.72 + 0.28 * Math.sin(this.time * s.twinkleSpeed + s.phase) + trebleMod * 0.28, 0.25, 1.3);
+        const alpha = clamp(s.baseAlpha * twinkle * (t > 0.5 ? 0.58 : 0.92), 0, 1);
+        const radius = clamp(s.size * proj.scale * (1.45 + trebleMod * 0.42), 0.55, 3.6);
+
+        ctx.fillStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, alpha);
+        ctx.beginPath();
+        ctx.arc(proj.x, proj.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (s.glint && radius > 0.95) {
+          const arm = radius * 4.2;
+          ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, alpha * 0.35);
+          ctx.lineWidth = 0.65;
+          ctx.beginPath();
+          ctx.moveTo(proj.x - arm, proj.y);
+          ctx.lineTo(proj.x + arm, proj.y);
+          ctx.moveTo(proj.x, proj.y - arm);
+          ctx.lineTo(proj.x, proj.y + arm);
+          ctx.stroke();
+        }
+      }
+    }
+
+    renderLattice(ctx, t) {
+      const n = this.latticeSize;
+      ctx.lineWidth = 0.78;
+
+      const drawSegment = (a, b) => {
+        if (!a.visible || !b.visible) return;
+        const fade = Math.min(a.radialFade, b.radialFade);
+        if (fade <= 0.01) return;
+
+        const avgCurv = (a.curvature + b.curvature) * 0.5;
+        const depthAtten = clamp(820 / ((a.pz + b.pz) * 0.5 + 120), 0.32, 1.15);
+        const baseAlpha = t > 0.5 ? 0.075 : 0.085;
+        const alpha = clamp((baseAlpha + avgCurv * 0.26) * fade * depthAtten, 0, 0.42);
+        if (alpha < 0.008) return;
+
+        ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkMuted, THEME_PALETTES.lightMuted, t, alpha);
+        ctx.beginPath();
+        ctx.moveTo(a.px, a.py);
+        ctx.lineTo(b.px, b.py);
+        ctx.stroke();
+      };
+
+      for (let iz = 0; iz <= n; iz++) {
+        const row = this.latticeVerts[iz];
+        for (let ix = 0; ix < n; ix++) {
+          drawSegment(row[ix], row[ix + 1]);
+        }
+      }
+
+      for (let ix = 0; ix <= n; ix++) {
+        for (let iz = 0; iz < n; iz++) {
+          drawSegment(this.latticeVerts[iz][ix], this.latticeVerts[iz + 1][ix]);
+        }
+      }
+    }
+
+    renderCursorLens(ctx, halfW, halfH, t) {
+      if (this.cursorInfluence < 0.05) return;
+      const proj = this.camera.project(
+        this.smoothCursorWorld.x,
+        this.smoothCursorWorld.y,
+        this.smoothCursorWorld.z,
+        halfW,
+        halfH,
+        1.0
+      );
+      if (!proj) return;
+
+      const ringR = lerp(24, 9, this.holdCharge) * clamp(proj.scale, 0.65, 1.5);
+      const alpha = this.cursorInfluence * (this.isCompressing ? 0.62 : 0.22);
+
+      ctx.save();
+      ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, alpha);
+      ctx.lineWidth = this.isCompressing ? 1.25 : 0.8;
+      ctx.setLineDash(this.isCompressing ? [] : [3, 4]);
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, ringR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      if (this.isCompressing && this.holdCharge > 0.05) {
+        ctx.setLineDash([]);
+        ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, 0.72);
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(
+          proj.x,
+          proj.y,
+          ringR + 7,
+          -Math.PI * 0.5,
+          -Math.PI * 0.5 + Math.PI * 2 * this.holdCharge
+        );
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    renderDepthSortedCosmos(ctx, halfW, halfH, t) {
+      const queue = this.renderQueue;
+      queue.length = 0;
+
+      // Queue expanding pulse rings on XZ plane
+      for (let i = 0; i < this.pulses.length; i++) {
+        const pulse = this.pulses[i];
+        const segs = 54;
+        for (let s = 0; s < segs; s++) {
+          const a0 = (s / segs) * Math.PI * 2;
+          const a1 = ((s + 1) / segs) * Math.PI * 2;
+          const p0 = this.camera.project(
+            pulse.x + Math.cos(a0) * pulse.radius,
+            pulse.y,
+            pulse.z + Math.sin(a0) * pulse.radius,
+            halfW,
+            halfH,
+            1.0
+          );
+          const p1 = this.camera.project(
+            pulse.x + Math.cos(a1) * pulse.radius,
+            pulse.y,
+            pulse.z + Math.sin(a1) * pulse.radius,
+            halfW,
+            halfH,
+            1.0
+          );
+          if (!p0 || !p1) continue;
+          const alpha = (1 - pulse.radius / pulse.maxRadius) * 0.45 * pulse.power;
+          queue.push({
+            z: (p0.z + p1.z) * 0.5,
+            type: 'segment',
+            x0: p0.x,
+            y0: p0.y,
+            x1: p1.x,
+            y1: p1.y,
+            alpha,
+            lineWidth: 1.25
+          });
+        }
+      }
+
+      // Queue gyroscopic astrolabe rings around primary well
+      const primary = this.wells[0];
+      for (let rIdx = 0; rIdx < this.astroRings.length; rIdx++) {
+        const ring = this.astroRings[rIdx];
+        const cosTx = Math.cos(ring.tiltX);
+        const sinTx = Math.sin(ring.tiltX);
+        const cosTz = Math.cos(ring.tiltZ);
+        const sinTz = Math.sin(ring.tiltZ);
+
+        let prev = null;
+        for (let s = 0; s <= ring.segments; s++) {
+          const theta = ring.angle + (s / ring.segments) * Math.PI * 2;
+          const lx = Math.cos(theta) * ring.radius;
+          const lz = Math.sin(theta) * ring.radius;
+
+          // Tilt X then Z
+          const y1 = -lz * sinTx;
+          const z1 = lz * cosTx;
+          const x2 = lx * cosTz - y1 * sinTz;
+          const y2 = lx * sinTz + y1 * cosTz;
+
+          const proj = this.camera.project(
+            primary.x + x2,
+            primary.y + y2,
+            primary.z + z1,
+            halfW,
+            halfH,
+            1.0
+          );
+          if (proj && prev) {
+            const avgZ = (proj.z + prev.z) * 0.5;
+            const depthBoost = clamp((this.camera.distance - avgZ) / 220 + 0.68, 0.25, 1.15);
+            queue.push({
+              z: avgZ,
+              type: 'segment',
+              x0: prev.x,
+              y0: prev.y,
+              x1: proj.x,
+              y1: proj.y,
+              alpha: ring.opacity * depthBoost,
+              lineWidth: 0.9
+            });
+          }
+          prev = proj;
+        }
+      }
+
+      // Queue singularity cores
+      for (let i = 0; i < this.wells.length; i++) {
+        const well = this.wells[i];
+        const proj = this.camera.project(well.x, well.y, well.z, halfW, halfH, 1.0);
+        if (!proj) continue;
+        queue.push({
+          z: proj.z,
+          type: 'well',
+          x: proj.x,
+          y: proj.y,
+          radius: well.coreRadius * proj.scale,
+          isPrimary: well.isPrimary
+        });
+      }
+
+      // Queue dynamic 3D particles with motion streaks
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        const proj = this.camera.project(p.x, p.y, p.z, halfW, halfH, 1.0);
+        if (!proj) continue;
+        if (proj.x < -30 || proj.x > this.width + 30 || proj.y < -30 || proj.y > this.height + 30) {
+          continue;
+        }
+        const prevProj = this.camera.project(p.px, p.py, p.pz, halfW, halfH, 1.0);
+        queue.push({
+          z: proj.z,
+          type: 'particle',
+          x: proj.x,
+          y: proj.y,
+          px: prevProj ? prevProj.x : proj.x,
+          py: prevProj ? prevProj.y : proj.y,
+          size: p.size * proj.scale,
+          alpha: p.alpha
+        });
+      }
+
+      // Painter's depth sort: furthest -> nearest
+      queue.sort((a, b) => b.z - a.z);
+
+      for (let i = 0; i < queue.length; i++) {
+        const item = queue[i];
+        if (item.type === 'segment') {
+          ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, item.alpha);
+          ctx.lineWidth = item.lineWidth;
+          ctx.beginPath();
+          ctx.moveTo(item.x0, item.y0);
+          ctx.lineTo(item.x1, item.y1);
+          ctx.stroke();
+        } else if (item.type === 'particle') {
+          const depthFactor = clamp(760 / (item.z + 90), 0.28, 1.32);
+          const alpha = clamp(item.alpha * depthFactor, 0.08, 0.96);
+          const radius = clamp(item.size, 0.55, 4.2);
+
+          const trailLen = Math.hypot(item.x - item.px, item.y - item.py);
+          if (trailLen > 1.4 && trailLen < 42) {
+            ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, alpha * 0.48);
+            ctx.lineWidth = clamp(radius * 0.85, 0.6, 2.2);
+            ctx.beginPath();
+            ctx.moveTo(item.px, item.py);
+            ctx.lineTo(item.x, item.y);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, alpha);
+          ctx.beginPath();
+          ctx.arc(item.x, item.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (item.type === 'well') {
+          this.drawSingularity(ctx, item, t);
+        }
+      }
+    }
+
+    drawSingularity(ctx, item, t) {
+      const bassAudio = this.audioData.active ? this.audioData.bass : 0;
+      const beatAudio = this.audioData.active ? this.audioData.beat : 0;
+      const r = clamp(item.radius * (1 + beatAudio * 0.14), 6, 98);
+      const breath = 1 + Math.sin(this.time * 1.8) * 0.045 + bassAudio * 0.22;
+      const haloR = r * (item.isPrimary ? 3.8 : 3.0) * breath;
+
+      // Outer atmospheric gravitational halo
+      const halo = ctx.createRadialGradient(item.x, item.y, r * 0.72, item.x, item.y, haloR);
+      halo.addColorStop(
+        0,
+        rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, item.isPrimary ? 0.34 : 0.24)
+      );
+      halo.addColorStop(
+        0.35,
+        rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, item.isPrimary ? 0.085 : 0.055)
+      );
+      halo.addColorStop(1, rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, 0));
+
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(item.x, item.y, haloR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Solid event horizon sphere (black in dark mode, pearl-white in light mode)
+      ctx.fillStyle = rgbaMix(THEME_PALETTES.darkCore, THEME_PALETTES.lightCore, t, 1);
+      ctx.beginPath();
+      ctx.arc(item.x, item.y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Crisp Photon Ring rim
+      ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, item.isPrimary ? 0.92 : 0.76);
+      ctx.lineWidth = item.isPrimary ? 1.55 : 1.15;
+      ctx.beginPath();
+      ctx.arc(item.x, item.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Inner subtle equatorial reflection arc
+      ctx.strokeStyle = rgbaMix(THEME_PALETTES.darkInk, THEME_PALETTES.lightInk, t, 0.25);
+      ctx.lineWidth = 0.75;
+      ctx.beginPath();
+      ctx.arc(item.x, item.y, r * 0.84, -0.7, 0.9);
+      ctx.stroke();
+    }
+  }
+
+  global.CosmosEngine = CosmosEngine;
+})(window);
+
+  </script>
+  <script>
+(function (global) {
+  'use strict';
+
+  class CosmicAudio {
+    constructor() {
+      this.ctx = null;
+      this.masterGain = null;
+      this.synthFilter = null;
+      this.analyser = null;
+      this.freqData = null;
+
+      this.mode = 'off';
+      this.lastActiveMode = 'synth';
+      this.enabled = false;
+      this.sensitivity = 1.2;
+
+      this.oscs = [];
+      this.mediaStream = null;
+      this.streamSource = null;
+
+      this.audioEl = null;
+      this.fileSource = null;
+      this.fileObjectUrl = null;
+      this.fileName = '';
+
+      this.smoothBass = 0;
+      this.smoothMid = 0;
+      this.smoothTreble = 0;
+      this.prevBass = 0;
+      this.beatImpulse = 0;
+      this.lastBeatTs = 0;
+
+      this.onExternalStop = null;
+    }
+
+    initContext() {
+      if (this.ctx) return true;
+      const AudioCtx = global.AudioContext || global.webkitAudioContext;
+      if (!AudioCtx) return false;
+
+      this.ctx = new AudioCtx();
+
+      this.analyser = this.ctx.createAnalyser();
+      this.analyser.fftSize = 1024;
+      this.analyser.smoothingTimeConstant = 0.76;
+      this.analyser.minDecibels = -86;
+      this.analyser.maxDecibels = -18;
+      this.freqData = new Uint8Array(this.analyser.frequencyBinCount);
+
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.value = 0;
+
+      this.synthFilter = this.ctx.createBiquadFilter();
+      this.synthFilter.type = 'lowpass';
+      this.synthFilter.frequency.value = 340;
+
+      // Subtle slow filter breathing for internal resonance
+      const lfo = this.ctx.createOscillator();
+      const lfoGain = this.ctx.createGain();
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.22;
+      lfoGain.gain.value = 140;
+      lfo.connect(lfoGain);
+      lfoGain.connect(this.synthFilter.frequency);
+      lfo.start();
+
+      this.masterGain.connect(this.synthFilter);
+      this.synthFilter.connect(this.analyser);
+      this.analyser.connect(this.ctx.destination);
+
+      const freqs = [
+        { hz: 55, type: 'sine', vol: 0.16 },
+        { hz: 82.41, type: 'triangle', vol: 0.065 },
+        { hz: 110, type: 'sine', vol: 0.045 },
+        { hz: 220, type: 'sine', vol: 0.02 }
+      ];
+      freqs.forEach((spec) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = spec.type;
+        osc.frequency.value = spec.hz;
+        gain.gain.value = spec.vol;
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start();
+        this.oscs.push(osc);
+      });
+
+      return true;
+    }
+
+    async ensureRunning() {
+      if (!this.initContext()) return false;
+      if (this.ctx.state === 'suspended') {
+        try {
+          await this.ctx.resume();
+        } catch (_) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    setSensitivity(val) {
+      const parsed = parseFloat(val);
+      if (Number.isFinite(parsed)) {
+        this.sensitivity = Math.min(2.5, Math.max(0.4, parsed));
+      }
+    }
+
+    resetSmoothing() {
+      this.smoothBass = 0;
+      this.smoothMid = 0;
+      this.smoothTreble = 0;
+      this.prevBass = 0;
+      this.beatImpulse = 0;
+    }
+
+    setSynthGain(active) {
+      if (!this.ctx || !this.masterGain) return;
+      const now = this.ctx.currentTime;
+      this.masterGain.gain.cancelScheduledValues(now);
+      this.masterGain.gain.setTargetAtTime(active ? 0.24 : 0, now, 0.28);
+    }
+
+    releaseCaptureStream() {
+      if (this.streamSource) {
+        try {
+          this.streamSource.disconnect();
+        } catch (_) {
+          // Ignore disconnect errors
+        }
+        this.streamSource = null;
+      }
+      if (this.mediaStream) {
+        this.mediaStream.getTracks().forEach((track) => {
+          try {
+            track.stop();
+          } catch (_) {
+            // Ignore stop errors
+          }
+        });
+        this.mediaStream = null;
+      }
+    }
+
+    pauseAudioElement() {
+      if (this.audioEl && !this.audioEl.paused) {
+        this.audioEl.pause();
+      }
+      if (this.fileSource && this.ctx && this.analyser) {
+        try {
+          this.fileSource.disconnect(this.ctx.destination);
+        } catch (_) {
+          // Ignore disconnect errors when not connected
+        }
+      }
+    }
+
+    stopAllSources() {
+      this.setSynthGain(false);
+      this.releaseCaptureStream();
+      this.pauseAudioElement();
+      this.enabled = false;
+      this.mode = 'off';
+      this.resetSmoothing();
+    }
+
+    async startSynth() {
+      const ok = await this.ensureRunning();
+      if (!ok) {
+        return { ok: false, message: '当前浏览器不支持 Web Audio API。' };
+      }
+      this.releaseCaptureStream();
+      this.pauseAudioElement();
+
+      // Reconnect analyser -> destination for audible drone & chimes
+      try {
+        this.analyser.connect(this.ctx.destination);
+      } catch (_) {
+        // Already connected
+      }
+
+      this.mode = 'synth';
+      this.lastActiveMode = 'synth';
+      this.enabled = true;
+      this.setSynthGain(true);
+      this.playHarmonic(440, 0.14);
+      return { ok: true, message: '内生谐波共振已激活，低频与时空网格同步呼吸。' };
+    }
+
+    disconnectAnalyserFromSpeakers() {
+      if (!this.ctx || !this.analyser) return;
+      try {
+        this.analyser.disconnect(this.ctx.destination);
+      } catch (_) {
+        // Ignore if already disconnected (prevents speaker echo on capture)
+      }
+    }
+
+    async startSystemAudio() {
+      const ok = await this.ensureRunning();
+      if (!ok) {
+        return { ok: false, message: '当前浏览器不支持 Web Audio API。' };
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        if (!window.isSecureContext) {
+          return {
+            ok: false,
+            message: '当前为非安全 HTTP 环境，浏览器禁止系统采集。请在本机打开 localhost:3001 或改用“本地音频”。'
+          };
+        }
+        return {
+          ok: false,
+          message: '当前浏览器不支持捕获电脑/标签页音频，建议使用桌面 Chrome / Edge 或“本地音频”。'
+        };
+      }
+
+      let stream = null;
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        });
+      } catch (err) {
+        const denied = err && (err.name === 'NotAllowedError' || err.name === 'AbortError');
+        return {
+          ok: false,
+          message: denied
+            ? '已取消电脑音频共享。'
+            : `无法启动电脑音频捕获：${err && err.message ? err.message : '未知错误'}`
+        };
+      }
+
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks || audioTracks.length === 0) {
+        stream.getTracks().forEach((t) => t.stop());
+        return {
+          ok: false,
+          message: '未检测到共享音轨：请在系统弹窗中选择标签页或屏幕并勾选“分享音频 / Share audio”。'
+        };
+      }
+
+      // Mute video rendering overhead while preserving track lifecycle
+      stream.getVideoTracks().forEach((vt) => {
+        vt.enabled = false;
+      });
+
+      this.stopAllSources();
+      this.disconnectAnalyserFromSpeakers();
+      this.mediaStream = stream;
+      this.streamSource = this.ctx.createMediaStreamSource(stream);
+      this.streamSource.connect(this.analyser);
+
+      audioTracks[0].addEventListener('ended', () => {
+        if (this.mode === 'system') {
+          this.stopAllSources();
+          if (typeof this.onExternalStop === 'function') {
+            this.onExternalStop('电脑系统音频共享已停止。');
+          }
+        }
+      });
+
+      this.mode = 'system';
+      this.lastActiveMode = 'system';
+      this.enabled = true;
+      return {
+        ok: true,
+        message: '已连接电脑/标签页音频，天体物理场正随系统声音实时共振（无回声直通）。'
+      };
+    }
+
+    async listInputDevices() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        return [];
+      }
+      try {
+        const all = await navigator.mediaDevices.enumerateDevices();
+        return all.filter((d) => d.kind === 'audioinput');
+      } catch (_) {
+        return [];
+      }
+    }
+
+    async startMicAudio(deviceId = '') {
+      const ok = await this.ensureRunning();
+      if (!ok) {
+        return { ok: false, message: '当前浏览器不支持 Web Audio API。' };
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (!window.isSecureContext) {
+          return {
+            ok: false,
+            message: '外部麦克风需要安全上下文。请使用 localhost:3001 访问，或改用“本地音频”。'
+          };
+        }
+        return { ok: false, message: '当前浏览器不支持麦克风音频捕获。' };
+      }
+
+      const audioConstraints = {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      };
+      if (deviceId) {
+        audioConstraints.deviceId = { exact: deviceId };
+      }
+
+      let stream = null;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: audioConstraints,
+          video: false
+        });
+      } catch (err) {
+        const denied = err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError');
+        return {
+          ok: false,
+          message: denied
+            ? '麦克风权限被拒绝，请在浏览器地址栏允许访问外部输入设备。'
+            : `外部输入开启失败：${err && err.message ? err.message : '设备不可用'}`
+        };
+      }
+
+      this.stopAllSources();
+      this.disconnectAnalyserFromSpeakers();
+      this.mediaStream = stream;
+      this.streamSource = this.ctx.createMediaStreamSource(stream);
+      this.streamSource.connect(this.analyser);
+
+      const activeTrack = stream.getAudioTracks()[0];
+      const activeSettings = activeTrack && typeof activeTrack.getSettings === 'function' ? activeTrack.getSettings() : {};
+      const devices = await this.listInputDevices();
+
+      if (activeTrack) {
+        activeTrack.addEventListener('ended', () => {
+          if (this.mode === 'mic') {
+            this.stopAllSources();
+            if (typeof this.onExternalStop === 'function') {
+              this.onExternalStop('外部输入设备已断开。');
+            }
+          }
+        });
+      }
+
+      this.mode = 'mic';
+      this.lastActiveMode = 'mic';
+      this.enabled = true;
+      return {
+        ok: true,
+        devices,
+        activeDeviceId: activeSettings.deviceId || deviceId || '',
+        message: '已连接外部声音（直通物理采集，未扬声回放以防啸叫）。'
+      };
+    }
+
+    ensureAudioElement() {
+      if (this.audioEl) return;
+      this.audioEl = document.createElement('audio');
+      this.audioEl.loop = true;
+      this.audioEl.preload = 'auto';
+      this.fileSource = this.ctx.createMediaElementSource(this.audioEl);
+      this.fileSource.connect(this.analyser);
+    }
+
+    async loadAudioFile(file) {
+      if (!file) return { ok: false, message: '未选择有效音频文件。' };
+      const ok = await this.ensureRunning();
+      if (!ok) return { ok: false, message: '当前浏览器不支持 Web Audio API。' };
+
+      this.stopAllSources();
+      this.ensureAudioElement();
+
+      if (this.fileObjectUrl) {
+        URL.revokeObjectURL(this.fileObjectUrl);
+        this.fileObjectUrl = null;
+      }
+
+      this.fileObjectUrl = URL.createObjectURL(file);
+      this.fileName = file.name || 'local-audio';
+      this.audioEl.src = this.fileObjectUrl;
+
+      try {
+        this.analyser.connect(this.ctx.destination);
+      } catch (_) {
+        // Already connected
+      }
+
+      this.mode = 'file';
+      this.lastActiveMode = 'file';
+      this.enabled = true;
+
+      try {
+        await this.audioEl.play();
+        return { ok: true, playing: true, fileName: this.fileName, message: `正在播放本地音轨：${this.fileName}` };
+      } catch (_) {
+        return { ok: true, playing: false, fileName: this.fileName, message: '音轨已就绪，请点击“播放”开始驱动宇宙声场。' };
+      }
+    }
+
+    async activateLoadedFile() {
+      if (!this.fileObjectUrl || !this.audioEl) {
+        return { ok: false, needsFile: true, message: '请选择本地音频文件（MP3 / WAV / FLAC / M4A 等）。' };
+      }
+      const ok = await this.ensureRunning();
+      if (!ok) return { ok: false, message: '当前浏览器不支持 Web Audio API。' };
+
+      this.stopAllSources();
+      try {
+        this.analyser.connect(this.ctx.destination);
+      } catch (_) {
+        // Already connected
+      }
+      this.mode = 'file';
+      this.lastActiveMode = 'file';
+      this.enabled = true;
+      try {
+        await this.audioEl.play();
+        return { ok: true, playing: true, fileName: this.fileName, message: `正在播放本地音轨：${this.fileName}` };
+      } catch (_) {
+        return { ok: true, playing: false, fileName: this.fileName, message: '点击“播放”恢复本地音轨共振。' };
+      }
+    }
+
+    async toggleFilePlayback() {
+      if (!this.audioEl || !this.fileObjectUrl) return false;
+      await this.ensureRunning();
+      try {
+        this.analyser.connect(this.ctx.destination);
+      } catch (_) {
+        // Already connected
+      }
+      if (this.audioEl.paused) {
+        await this.audioEl.play();
+        this.mode = 'file';
+        this.enabled = true;
+        return true;
+      }
+      this.audioEl.pause();
+      return false;
+    }
+
+    isFilePlaying() {
+      return Boolean(this.audioEl && !this.audioEl.paused && this.mode === 'file');
+    }
+
+    getAnalysis() {
+      if (this.mode === 'off' || !this.analyser || !this.freqData) {
+        return { active: false, bass: 0, mid: 0, treble: 0, energy: 0, beat: 0 };
+      }
+
+      if (this.mode === 'file' && this.audioEl && this.audioEl.paused) {
+        this.smoothBass *= 0.85;
+        this.smoothMid *= 0.85;
+        this.smoothTreble *= 0.85;
+        this.beatImpulse *= 0.8;
+        return {
+          active: true,
+          bass: this.smoothBass,
+          mid: this.smoothMid,
+          treble: this.smoothTreble,
+          energy: (this.smoothBass + this.smoothMid + this.smoothTreble) / 3,
+          beat: this.beatImpulse
+        };
+      }
+
+      this.analyser.getByteFrequencyData(this.freqData);
+      const nyquist = (this.ctx ? this.ctx.sampleRate : 48000) * 0.5;
+      const binHz = nyquist / this.freqData.length;
+
+      const avgRange = (minHz, maxHz) => {
+        const start = Math.max(1, Math.floor(minHz / binHz));
+        const end = Math.min(this.freqData.length - 1, Math.max(start + 1, Math.ceil(maxHz / binHz)));
+        let sum = 0;
+        let peak = 0;
+        for (let i = start; i <= end; i++) {
+          const val = this.freqData[i] / 255;
+          sum += val;
+          if (val > peak) peak = val;
+        }
+        const mean = sum / (end - start + 1);
+        return mean * 0.65 + peak * 0.35;
+      };
+
+      const modeGain = this.mode === 'synth' ? 1.45 : 1.0;
+      const sens = this.sensitivity * modeGain;
+
+      let rawBass = Math.min(1.5, Math.pow(avgRange(24, 220) * sens, 0.88));
+      let rawMid = Math.min(1.5, Math.pow(avgRange(220, 2200) * sens * 1.08, 0.9));
+      let rawTreble = Math.min(1.5, Math.pow(avgRange(2200, 10000) * sens * 1.25, 0.92));
+
+      if (this.mode === 'synth' && rawBass > 0.02) {
+        const t = performance.now() * 0.001;
+        rawMid = Math.max(rawMid, rawBass * (0.28 + 0.16 * Math.sin(t * 0.9)));
+        rawTreble = Math.max(rawTreble, rawBass * (0.18 + 0.14 * Math.cos(t * 1.3)));
+      }
+
+      const lerp = (cur, target) => cur + (target - cur) * (target > cur ? 0.42 : 0.18);
+      this.smoothBass = lerp(this.smoothBass, rawBass);
+      this.smoothMid = lerp(this.smoothMid, rawMid);
+      this.smoothTreble = lerp(this.smoothTreble, rawTreble);
+
+      const now = performance.now();
+      const delta = rawBass - this.prevBass * 1.1;
+      if (rawBass > 0.25 && delta > 0.08 && now - this.lastBeatTs > 220) {
+        this.beatImpulse = Math.min(1.4, delta * 3.8 + rawBass * 0.42);
+        this.lastBeatTs = now;
+      } else {
+        this.beatImpulse *= 0.82;
+      }
+      this.prevBass = this.prevBass * 0.82 + rawBass * 0.18;
+
+      const energy = Math.min(1.5, this.smoothBass * 0.45 + this.smoothMid * 0.35 + this.smoothTreble * 0.2);
+      return {
+        active: true,
+        bass: this.smoothBass,
+        mid: this.smoothMid,
+        treble: this.smoothTreble,
+        energy,
+        beat: this.beatImpulse
+      };
+    }
+
+    playHarmonic(freq = 330, duration = 0.22, vol = 0.06) {
+      if (this.mode !== 'synth' || !this.enabled || !this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.72, now + duration);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.018);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(this.analyser || this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    playPulse() {
+      if (this.mode !== 'synth' || !this.enabled || !this.ctx) return;
+      this.playHarmonic(196, 0.55, 0.09);
+      this.playHarmonic(392, 0.42, 0.04);
+    }
+  }
+
+  function formatSignedDeg(deg) {
+    const sign = deg >= 0 ? '+' : '-';
+    return sign + Math.abs(deg).toFixed(1).padStart(4, '0');
+  }
+
+  function formatYaw(deg) {
+    const norm = ((deg % 360) + 360) % 360;
+    return norm.toFixed(1).padStart(5, '0');
+  }
+
+  function spawnRipple(btn, clientX, clientY) {
+    const rect = btn.getBoundingClientRect();
+    const x = clientX ? clientX - rect.left : rect.width * 0.5;
+    const y = clientY ? clientY - rect.top : rect.height * 0.5;
+
+    const ripple = document.createElement('span');
+    ripple.className = 'breath-ripple';
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    btn.appendChild(ripple);
+
+    global.setTimeout(() => {
+      ripple.remove();
+    }, 620);
+  }
+
+  function setupBreathingButtons() {
+    const buttons = document.querySelectorAll('.breath-btn');
+    buttons.forEach((btn) => {
+      btn.addEventListener('pointermove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const relX = (e.clientX - rect.left) / rect.width;
+        const relY = (e.clientY - rect.top) / rect.height;
+        const mx = (relX - 0.5) * 2;
+        const my = (relY - 0.5) * 2;
+        btn.style.setProperty('--mx', mx.toFixed(3));
+        btn.style.setProperty('--my', my.toFixed(3));
+        btn.style.setProperty('--spot-x', `${(relX * 100).toFixed(1)}%`);
+        btn.style.setProperty('--spot-y', `${(relY * 100).toFixed(1)}%`);
+      });
+
+      btn.addEventListener('pointerleave', () => {
+        btn.style.setProperty('--mx', '0');
+        btn.style.setProperty('--my', '0');
+      });
+
+      btn.addEventListener('pointerdown', (e) => {
+        spawnRipple(btn, e.clientX, e.clientY);
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('cosmos-canvas');
+    const editorialOverlay = document.querySelector('.editorial-overlay');
+    const btnTheme = document.getElementById('btn-theme');
+    const themeLabel = document.getElementById('theme-label');
+    const btnZen = document.getElementById('btn-zen');
+    const btnZenRestore = document.getElementById('btn-zen-restore');
+    const btnAudio = document.getElementById('btn-audio');
+    const btnAudioLabel = document.getElementById('btn-audio-label');
+    const audioPopover = document.getElementById('audio-popover');
+    const audioSourceTag = document.getElementById('audio-source-tag');
+    const audioSourceBtns = Array.from(document.querySelectorAll('.audio-src-btn'));
+    const audioDeviceRow = document.getElementById('audio-device-row');
+    const audioDeviceSelect = document.getElementById('audio-device-select');
+    const audioFileRow = document.getElementById('audio-file-row');
+    const audioFileInput = document.getElementById('audio-file-input');
+    const btnAudioPick = document.getElementById('btn-audio-pick');
+    const btnAudioPlay = document.getElementById('btn-audio-play');
+    const audioPlayLabel = document.getElementById('audio-play-label');
+    const audioFileName = document.getElementById('audio-file-name');
+    const audioSensitivity = document.getElementById('audio-sensitivity');
+    const audioSensValue = document.getElementById('audio-sens-value');
+    const meterBass = document.getElementById('meter-bass');
+    const meterMid = document.getElementById('meter-mid');
+    const meterTreble = document.getElementById('meter-treble');
+    const audioStatus = document.getElementById('audio-status');
+    const btnPulse = document.getElementById('btn-pulse');
+    const btnWell = document.getElementById('btn-well');
+    const btnReset = document.getElementById('btn-reset');
+
+    const modeSlider = document.getElementById('mode-slider');
+    const modeButtons = Array.from(document.querySelectorAll('.mode-btn'));
+    const fieldStateLabel = document.getElementById('field-state-label');
+
+    const gravitySlider = document.getElementById('gravity-slider');
+    const gravityReadout = document.getElementById('gravity-readout');
+
+    const wellCountBadge = document.getElementById('well-count');
+    const coordYaw = document.getElementById('coord-yaw');
+    const coordPitch = document.getElementById('coord-pitch');
+    const coordDepth = document.getElementById('coord-depth');
+    const metricBodies = document.getElementById('metric-bodies');
+    const metricWells = document.getElementById('metric-wells');
+    const metricCurvature = document.getElementById('metric-curvature');
+
+    const audio = new CosmicAudio();
+
+    const engine = new global.CosmosEngine(canvas, {
+      onPointerParallax(nx, ny) {
+        if (editorialOverlay) {
+          editorialOverlay.style.setProperty('--ui-parallax-x', `${(-nx * 6).toFixed(2)}px`);
+          editorialOverlay.style.setProperty('--ui-parallax-y', `${(-ny * 4.5).toFixed(2)}px`);
+        }
+      },
+      onWellCountChange(count) {
+        wellCountBadge.textContent = `${count}/3`;
+        metricWells.textContent = String(count);
+      },
+      onWellSpawned() {
+        audio.playHarmonic(523.25, 0.24, 0.05);
+      },
+      onShockwave() {
+        audio.playPulse();
+      },
+      onTelemetry(data) {
+        coordYaw.textContent = formatYaw(data.yawDeg);
+        coordPitch.textContent = formatSignedDeg(data.pitchDeg);
+        coordDepth.textContent = String(data.depth).padStart(4, '0');
+        metricBodies.textContent = String(data.bodies);
+        metricWells.textContent = String(data.wells);
+        metricCurvature.textContent = data.curvature.toFixed(2);
+      }
+    });
+
+    function syncModeSlider() {
+      const activeBtn = modeButtons.find((b) => b.classList.contains('is-active'));
+      if (!activeBtn || !modeSlider) return;
+      const left = activeBtn.offsetLeft;
+      const width = activeBtn.offsetWidth;
+      modeSlider.style.width = `${width}px`;
+      modeSlider.style.transform = `translateX(${left - 3}px)`;
+    }
+
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.documentElement.dataset.theme = theme;
+      btnTheme.setAttribute('aria-pressed', String(isLight));
+      themeLabel.textContent = isLight ? '观测 · 白' : '深空 · 黑';
+      engine.setTheme(theme);
+      try {
+        localStorage.setItem('gravitas-theme', theme);
+      } catch (err) {
+        // Ignore storage errors in restricted contexts
+      }
+    }
+
+    function applyMode(mode) {
+      const labels = {
+        attract: 'ATTRACT',
+        repel: 'REPEL',
+        zerog: 'ZERO-G'
+      };
+      modeButtons.forEach((b) => {
+        const active = b.dataset.mode === mode;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-checked', String(active));
+      });
+      fieldStateLabel.textContent = labels[mode] || 'ATTRACT';
+      syncModeSlider();
+      engine.setMode(mode);
+      audio.playHarmonic(mode === 'attract' ? 293.66 : mode === 'repel' ? 392.0 : 220.0, 0.2, 0.05);
+    }
+
+    function setZenMode(enabled) {
+      document.body.classList.toggle('is-zen', enabled);
+      btnZen.setAttribute('aria-pressed', String(enabled));
+      btnZenRestore.hidden = !enabled;
+    }
+
+    // Initialize saved theme or default dark
+    let initialTheme = 'dark';
+    try {
+      const saved = localStorage.getItem('gravitas-theme');
+      if (saved === 'light' || saved === 'dark') {
+        initialTheme = saved;
+      }
+    } catch (err) {
+      initialTheme = 'dark';
+    }
+    applyTheme(initialTheme);
+    engine.themeT = initialTheme === 'light' ? 1 : 0;
+
+    setupBreathingButtons();
+    syncModeSlider();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(syncModeSlider);
+    }
+    window.addEventListener('resize', syncModeSlider);
+
+    // Event bindings
+    btnTheme.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      audio.playHarmonic(next === 'light' ? 587.33 : 293.66, 0.25, 0.05);
+    });
+
+    const AUDIO_SOURCE_META = {
+      off: { tag: 'OFF', btnLabel: '声场' },
+      synth: { tag: 'SYNTH', btnLabel: '声场 · 共振' },
+      system: { tag: 'SYSTEM', btnLabel: '声场 · 电脑' },
+      mic: { tag: 'MIC IN', btnLabel: '声场 · 外部' },
+      file: { tag: 'LOCAL', btnLabel: '声场 · 音轨' }
+    };
+
+    function setAudioPopoverOpen(open) {
+      if (!audioPopover) return;
+      audioPopover.hidden = !open;
+      btnAudio.setAttribute('aria-expanded', String(open));
+    }
+
+    function syncAudioUI(statusMessage) {
+      const mode = audio.mode;
+      const active = mode !== 'off';
+      const meta = AUDIO_SOURCE_META[mode] || AUDIO_SOURCE_META.off;
+
+      btnAudio.setAttribute('aria-pressed', String(active));
+      document.body.classList.toggle('audio-active', active);
+      if (btnAudioLabel) btnAudioLabel.textContent = meta.btnLabel;
+      if (audioSourceTag) audioSourceTag.textContent = meta.tag;
+
+      audioSourceBtns.forEach((btn) => {
+        const selected = btn.dataset.source === mode;
+        btn.classList.toggle('is-selected', selected);
+        btn.setAttribute('aria-checked', String(selected));
+      });
+
+      if (audioDeviceRow) {
+        audioDeviceRow.hidden = mode !== 'mic' || audioDeviceSelect.options.length === 0;
+      }
+      if (audioFileRow) {
+        audioFileRow.hidden = mode !== 'file' && !audio.fileObjectUrl;
+      }
+      if (audioPlayLabel) {
+        audioPlayLabel.textContent = audio.isFilePlaying() ? '暂停' : '播放';
+      }
+      if (statusMessage && audioStatus) {
+        audioStatus.textContent = statusMessage;
+      }
+    }
+
+    function populateAudioDevices(devices, activeDeviceId) {
+      if (!audioDeviceSelect) return;
+      audioDeviceSelect.innerHTML = '';
+      devices.forEach((dev, idx) => {
+        const opt = document.createElement('option');
+        opt.value = dev.deviceId;
+        opt.textContent = dev.label || `外部音频输入 ${idx + 1}`;
+        if (activeDeviceId && dev.deviceId === activeDeviceId) {
+          opt.selected = true;
+        }
+        audioDeviceSelect.appendChild(opt);
+      });
+    }
+
+    async function selectAudioSource(sourceMode) {
+      if (sourceMode === 'off') {
+        audio.stopAllSources();
+        syncAudioUI('声场已关闭。随时可分开选择内生共振、电脑声音、外部麦克风或本地音频。');
+        return;
+      }
+
+      if (sourceMode === 'synth') {
+        const res = await audio.startSynth();
+        syncAudioUI(res.message);
+        return;
+      }
+
+      if (sourceMode === 'system') {
+        const res = await audio.startSystemAudio();
+        syncAudioUI(res.message);
+        return;
+      }
+
+      if (sourceMode === 'mic') {
+        const preferred = audioDeviceSelect ? audioDeviceSelect.value : '';
+        const res = await audio.startMicAudio(preferred);
+        if (res.ok && res.devices) {
+          populateAudioDevices(res.devices, res.activeDeviceId);
+        }
+        syncAudioUI(res.message);
+        return;
+      }
+
+      if (sourceMode === 'file') {
+        if (!audio.fileObjectUrl) {
+          if (audioFileRow) audioFileRow.hidden = false;
+          syncAudioUI('请选择一段本地音频驱动空间声场。');
+          if (audioFileInput) audioFileInput.click();
+          return;
+        }
+        const res = await audio.activateLoadedFile();
+        if (btnAudioPlay) btnAudioPlay.disabled = !audio.fileObjectUrl;
+        syncAudioUI(res.message);
+      }
+    }
+
+    audio.onExternalStop = (msg) => {
+      syncAudioUI(msg);
+    };
+
+    // Audio reactivity loop feeding engine and spectrum HUD bars
+    (function tickAudioField() {
+      const analysis = audio.getAnalysis();
+      engine.setAudioData(analysis);
+
+      if (analysis.active) {
+        const toPct = (v) => `${Math.min(100, Math.round(v * 100))}%`;
+        if (meterBass) meterBass.style.width = toPct(analysis.bass);
+        if (meterMid) meterMid.style.width = toPct(analysis.mid);
+        if (meterTreble) meterTreble.style.width = toPct(analysis.treble);
+        document.body.style.setProperty('--audio-energy', analysis.energy.toFixed(3));
+      } else {
+        if (meterBass && meterBass.style.width !== '0%') meterBass.style.width = '0%';
+        if (meterMid && meterMid.style.width !== '0%') meterMid.style.width = '0%';
+        if (meterTreble && meterTreble.style.width !== '0%') meterTreble.style.width = '0%';
+        document.body.style.setProperty('--audio-energy', '0');
+      }
+
+      requestAnimationFrame(tickAudioField);
+    })();
+
+    btnAudio.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = audioPopover ? !audioPopover.hidden : false;
+      setAudioPopoverOpen(!isOpen);
+    });
+
+    if (audioPopover) {
+      audioPopover.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!audioPopover || audioPopover.hidden) return;
+      if (!audioPopover.contains(e.target) && !btnAudio.contains(e.target)) {
+        setAudioPopoverOpen(false);
+      }
+    });
+
+    audioSourceBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        selectAudioSource(btn.dataset.source);
+      });
+    });
+
+    if (audioDeviceSelect) {
+      audioDeviceSelect.addEventListener('change', async (e) => {
+        if (audio.mode === 'mic') {
+          const res = await audio.startMicAudio(e.target.value);
+          syncAudioUI(res.message);
+        }
+      });
+    }
+
+    if (btnAudioPick && audioFileInput) {
+      btnAudioPick.addEventListener('click', () => {
+        audioFileInput.click();
+      });
+      audioFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const res = await audio.loadAudioFile(file);
+        if (audioFileName) audioFileName.textContent = file.name;
+        if (btnAudioPlay) btnAudioPlay.disabled = false;
+        syncAudioUI(res.message);
+      });
+    }
+
+    if (btnAudioPlay) {
+      btnAudioPlay.addEventListener('click', async () => {
+        await audio.toggleFilePlayback();
+        syncAudioUI(
+          audio.isFilePlaying()
+            ? `正在播放本地音轨：${audio.fileName}`
+            : `已暂停：${audio.fileName}`
+        );
+      });
+    }
+
+    if (audioSensitivity) {
+      audioSensitivity.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        audio.setSensitivity(val);
+        if (audioSensValue) audioSensValue.textContent = `${val.toFixed(1)}x`;
+      });
+    }
+
+    btnZen.addEventListener('click', () => setZenMode(true));
+    btnZenRestore.addEventListener('click', () => setZenMode(false));
+
+    modeButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyMode(btn.dataset.mode);
+      });
+    });
+
+    gravitySlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      gravityReadout.textContent = `${val.toFixed(1)}G`;
+      engine.setStrength(val);
+    });
+
+    btnPulse.addEventListener('click', () => {
+      engine.triggerPulse(0, 0, 0, 1.0);
+      audio.playPulse();
+    });
+
+    btnWell.addEventListener('click', () => {
+      engine.addWell();
+      audio.playHarmonic(523.25, 0.24, 0.05);
+    });
+
+    btnReset.addEventListener('click', () => {
+      engine.reset();
+      gravitySlider.value = '1.0';
+      gravityReadout.textContent = '1.0G';
+      engine.setStrength(1.0);
+      applyMode('attract');
+      audio.playHarmonic(329.63, 0.26, 0.05);
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      const key = e.key.toLowerCase();
+      if (key === 't') {
+        btnTheme.click();
+      } else if (key === 'h') {
+        setZenMode(!document.body.classList.contains('is-zen'));
+      } else if (e.key === 'Escape' && audioPopover && !audioPopover.hidden) {
+        setAudioPopoverOpen(false);
+      } else if (e.key === 'Escape' && document.body.classList.contains('is-zen')) {
+        setZenMode(false);
+      } else if (key === 'r') {
+        btnReset.click();
+      } else if (key === 'm') {
+        if (audio.mode === 'off') {
+          selectAudioSource(audio.lastActiveMode || 'synth');
+        } else {
+          selectAudioSource('off');
+        }
+      } else if (key === '1') {
+        applyMode('attract');
+      } else if (key === '2') {
+        applyMode('repel');
+      } else if (key === '3') {
+        applyMode('zerog');
+      } else if (e.code === 'Space' && document.activeElement === document.body) {
+        e.preventDefault();
+        spawnRipple(btnPulse);
+        engine.triggerPulse(0, 0, 0, 1.0);
+        audio.playPulse();
+      }
+    });
+
+    engine.start();
+  });
+})(window);
+
+  </script>
+</body>
+</html>
